@@ -12,9 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('super_admin', function (Blueprint $table) {
-            $table->foreignId('user_id')->primary()->constrained('users')->cascadeOnDelete();
+            $table->foreignId('user_id')->primary()->nullable();
             $table->integer('access_level')->default(1);
             $table->text('notes')->nullable();
+            $table->timestamps();
         });
     }
 

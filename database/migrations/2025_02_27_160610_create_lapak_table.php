@@ -12,10 +12,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('lapak', function (Blueprint $table) {
-            $table->foreignId('user_id')->primary()->constrained('users')->cascadeOnDelete();
+            $table->foreignId('user_id')->primary()->nullable();
             $table->string('no_lapak')->nullable();
             $table->foreignId('pasar_id')->constrained('pasar')->cascadeOnDelete();
             $table->string('telp')->nullable();
+            $table->timestamps();
         });
     }
 

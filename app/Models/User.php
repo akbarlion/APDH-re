@@ -65,23 +65,17 @@ class User extends Authenticatable implements FilamentUser
     public function profile()
     {
         return match ($this->role) {
-            'juleha' => $this->belongsTo(
-                Juleha::class, 'user_id'),
+            'juleha' => $this->hasOne(Juleha::class),
 
-            'peternak' => $this->belongsTo(
-                Peternak::class, 'user_id'),
+            'peternak' => $this->hasOne(Peternak::class),
 
-            'penyelia' => $this->belongsTo(
-                Penyelia::class, 'user_id'),
+            'penyelia' => $this->hasOne(Penyelia::class),
 
-            'admin_rph' => $this->belongsTo(
-                AdminRph::class, 'user_id'),
+            'admin_rph' => $this->hasOne(AdminRph::class),
 
-            'super_admin' => $this->belongsTo(
-                SuperAdmin::class, 'user_id'),
+            'super_admin' => $this->hasOne(SuperAdmin::class),
 
-            'lapak' => $this->belongsTo(
-                lapak::class, 'user_id'),
+            'lapak' => $this->hasOne(lapak::class),
 
             default => null,
         };

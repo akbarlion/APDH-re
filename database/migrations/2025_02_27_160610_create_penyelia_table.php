@@ -12,12 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('penyelia', function (Blueprint $table) {
-            $table->foreignId('user_id')->primary()->constrained('users')->cascadeOnDelete();
-            $table->foreignId('rph_id')->constrained('rph_id')->cascadeOnDelete();
+            $table->foreignId('user_id')->primary()->nullable();
+            $table->foreignId('rph_id')->nullable();
             $table->string('nip')->nullable();
             $table->string('status')->nullable();
             $table->date('tgl_berlaku')->nullable();
             $table->string('file_sk')->nullable();
+            $table->timestamps();
         });
     }
 

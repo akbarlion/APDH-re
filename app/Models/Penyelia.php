@@ -31,10 +31,11 @@ class Penyelia extends Model
     // Lapak belongs to a user
     public function user()
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(User::class);
     }
 
     public function rph()
     {
-        return $this->belongsTo(Rph::class, 'rph_id');
+        return $this->belongsTo(Rph::class);
+    }
 }

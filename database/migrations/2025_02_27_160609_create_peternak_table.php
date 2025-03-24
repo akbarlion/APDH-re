@@ -12,8 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('peternak', function (Blueprint $table) {
-            $table->foreignId('user_id')->primary()->constrained('users')->cascadeOnDelete();
+            $table->foreignId('user_id')->primary()->nullable();
             $table->string('status_usaha')->nullable();
+            $table->timestamps();
         });
     }
 

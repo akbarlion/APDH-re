@@ -11,10 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('pasar', function (Blueprint $table) {
+        Schema::create('rph', function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->string('alamat');
+            $table->string('phone')->nullable();
+            $table->enum('status_sertifikasi', ['sudah', 'belum']);
+            $table->string('file_sertifikasi')->nullable();
+            $table->string('waktu_upload')->nullable();
+            $table->foreignId('penyelia_id')->nullable();
             $table->timestamps();
         });
     }
@@ -24,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('pasar');
+        //
     }
 };

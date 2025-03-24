@@ -22,11 +22,12 @@ class AdminRph extends Model
 
     /**
      * Relationships
+     *
+     * Admin RPH belongsTo RPH
      */
 
-    // Lapak belongs to a user
     public function rph()
     {
-        return $this->belongsTo(Rph::class, 'rph_id');
+        return $this->belongsTo(Rph::class);
     }
 }

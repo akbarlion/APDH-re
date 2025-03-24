@@ -11,7 +11,17 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\UserResource\Pages;
 use App\Filament\Resources\UserResource\RelationManagers;
 use App\Models\User;
+use App\Models\Rph;
+
 use Filament\Forms;
+use Filament\Forms\Components\Fieldset;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Textarea;
+
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -29,23 +39,23 @@ class UserResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Section::make()
+                Section::make()
                     ->columns(['xl' => 6])
                     ->schema([
-                        Forms\Components\TextInput::make('fullname')
+                        TextInput::make('name')
                             ->columnSpan(['xl' => 3])
                             ->label('Nama Lengkap')
                             ->required(),
-                        Forms\Components\TextInput::make('email')
+                        TextInput::make('email')
                             ->columnSpan(['xl' => 3])
                             ->email()
                             ->required(),
-                        Forms\Components\TextInput::make('password')
+                        TextInput::make('password')
                             ->columnSpan(['xl' => 3])
                             ->password()
                             ->confirmed()
                             ->required(),
-                         Forms\Components\TextInput::make('password_confirmation')
+                         TextInput::make('password_confirmation')
                              ->columnSpan(['xl' => 3])
                              ->password()
                              ->required()
@@ -53,12 +63,12 @@ class UserResource extends Resource
                              ->same('password')
                              ->dehydrated(false)
                              ->label('Confirm Password'),
-                         Forms\Components\TextInput::make('phone')
+                         TextInput::make('phone')
                              ->columnSpan(['xl' => 3])
                              ->label('No Telp'),
-                         Forms\Components\Textarea::make('alamat')
+                         Textarea::make('alamat')
                              ->columnSpan(['xl' => 3]),
-                         Forms\Components\Select::make('role')
+                         Select::make('role')
                              ->columnSpan(['xl' => 3])
                              ->options([
                                  'super_admin' => 'Super Admin',
@@ -73,21 +83,58 @@ class UserResource extends Resource
                              ->live(),
                     ]),
 
-                    Forms\Components\Fieldset::make('Role')
+                    Fieldset::make('Role')
                         ->schema([])
                         ->visible(fn (
                             Forms\Get $get
                         ) => $get('role') == ''),
 
-                    Forms\Components\Fieldset::make('Juleha')
+                    Fieldset::make('Super Admin')
                         ->schema([
-                         Forms\Components\TextInput::make('nomor_sertifikat')
+                            Textarea::make('notes')
+                            ->label('Catatan')
+                        ])
+                        ->visible(fn (
+                            Forms\Get $get
+                        ) => $get('role') == 'super_admin'),
+
+                    Fieldset::make('Admin RPH')
+                        ->relationship('profile')
+                        ->schema([
+                            Select::make('rph_id')
+                                ->label('RPH')
+                                ->native(false)
+                                ->options(Rph::all()->pluck('name', 'id'))
+                                ->default(function ($record) {
+                                    if ($record && $record->profile && $record->profile->rph_id) {
+                                        return $record->profile->rph_id;
+                                    }
+                                    return null; // No default if no linked RPH
+                                })
+                                ->disabled(function ($get, $state) {
+                                    return RPH::count() === 0;
+                                })
+                                ->hint(function ($state) {
+                                    if (RPH::count() === 0) {
+                                        return 'Please add an RPH first.';
+                                    }
+                                    return null;
+                                })
+                        ])
+                        ->visible(fn (
+                            Forms\Get $get
+                        ) => $get('role') == 'admin_rph'),
+
+                    Fieldset::make('Juleha')
+                        ->relationship('profile')
+                        ->schema([
+                         TextInput::make('nomor_sertifikat')
                              ->columnSpan(['xl' => 3])
                              ->label('Nomor Sertifikat'),
-                         Forms\Components\TextInput::make('masa_sertifikat')
+                         TextInput::make('masa_sertifikat')
                              ->columnSpan(['xl' => 3])
                              ->label('Masa Berlaku'),
-                         Forms\Components\TextInput::make('upload_sertifikat')
+                         TextInput::make('upload_sertifikat')
                              ->columnSpan(['xl' => 3])
                              ->label('Upload Sertifikat'),
                         ])
@@ -95,23 +142,23 @@ class UserResource extends Resource
                             Forms\Get $get
                         ) => $get('role') === 'juleha'),
 
-                    Forms\Components\Fieldset::make('Penyelia')
+                    Fieldset::make('Penyelia')
                         ->columns(['xl' => 6])
                         ->relationship('profile')
                         ->schema([
-                         Forms\Components\TextInput::make('nip')
+                         TextInput::make('nip')
                              ->columnSpan(['xl' => 3])
                              ->label('Nomor Induk Penyelia'),
-                         Forms\Components\TextInput::make('rph')
+                         TextInput::make('rph')
                              ->columnSpan(['xl' => 3])
                              ->label('RPH'),
-                         Forms\Components\TextInput::make('status')
+                         TextInput::make('status')
                              ->columnSpan(['xl' => 3]),
-                         Forms\Components\DatePicker::make('tgl_berlaku')
+                         DatePicker::make('tgl_berlaku')
                              ->columnSpan(['xl' => 3])
                              ->native(false)
                              ->label('Tanggal Berlaku'),
-                         Forms\Components\FileUpload::make('file_sk')
+                         FileUpload::make('file_sk')
                              ->columnSpan(['xl' => 3])
                              ->label('Upload SK'),
                         ])

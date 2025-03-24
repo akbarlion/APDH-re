@@ -12,8 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('admin_rph', function (Blueprint $table) {
-            $table->foreignId('user_id')->primary()->constrained('users')->cascadeOnDelete();
+            $table->foreignId('user_id')->primary()->nullable();
             $table->foreignId('rph_id')->constrained('rph')->cascadeOnDelete();
+            $table->timestamps();
         });
     }
 
