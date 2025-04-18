@@ -19,7 +19,8 @@ class RphResource extends Resource
 {
     protected static ?string $model = Rph::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-home-modern';
+    protected static ?string $navigationLabel = 'RPH';
 
     public static function form(Form $form): Form
     {

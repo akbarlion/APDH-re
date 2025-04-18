@@ -60,7 +60,7 @@ class User extends Authenticatable implements FilamentUser
     /**
      * Get user profiles
      *
-     * @return ... db row? Whatever it's type is
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
      */
     public function profile()
     {

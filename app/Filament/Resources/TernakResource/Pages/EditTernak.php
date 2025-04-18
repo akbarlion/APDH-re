@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Filament\Resources\JulehaResource\Pages;
+namespace App\Filament\Resources\TernakResource\Pages;
 
-use App\Filament\Resources\JulehaResource;
+use App\Filament\Resources\TernakResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 
-class EditJuleha extends EditRecord
+class EditTernak extends EditRecord
 {
-    protected static string $resource = JulehaResource::class;
+    protected static string $resource = TernakResource::class;
 
     protected function getHeaderActions(): array
     {

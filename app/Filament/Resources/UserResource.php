@@ -33,10 +33,36 @@ class UserResource extends Resource
 {
     protected static ?string $model = User::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-users';
+
+    private static function rph_selector($columns) {
+        $rph_sel = Select::make('rph_id')
+            ->label('RPH')
+            ->native(false)
+            ->options(Rph::all()->pluck('name', 'id'))
+            ->default(function ($record) {
+                if ($record && $record->profile && $record->profile->rph_id) {
+                    return $record->profile->rph_id;
+                }
+                return null; // No default if no linked RPH
+            })
+            ->disabled(function ($get, $state) {
+                return RPH::count() === 0;
+            })
+            ->hint(function ($state) {
+                if (RPH::count() === 0) {
+                    return 'Please add an RPH first.';
+                }
+                return null;
+            });
+
+        if ($columns) { $rph_sel = $rph_sel->columnSpan(['xl' => $columns]); }
+        return $rph_sel;
+    }
 
     public static function form(Form $form): Form
     {
+
         return $form
             ->schema([
                 Section::make()
@@ -90,6 +116,7 @@ class UserResource extends Resource
                         ) => $get('role') == ''),
 
                     Fieldset::make('Super Admin')
+                        ->relationship('profile')
                         ->schema([
                             Textarea::make('notes')
                             ->label('Catatan')
@@ -143,28 +170,43 @@ class UserResource extends Resource
                         ) => $get('role') === 'juleha'),
 
                     Fieldset::make('Penyelia')
-                        ->columns(['xl' => 6])
+                        ->columns(['xl' => 2])
                         ->relationship('profile')
                         ->schema([
+                         self::rph_selector(1),
                          TextInput::make('nip')
-                             ->columnSpan(['xl' => 3])
+                             ->columnSpan(['xl' => 1])
                              ->label('Nomor Induk Penyelia'),
-                         TextInput::make('rph')
-                             ->columnSpan(['xl' => 3])
-                             ->label('RPH'),
                          TextInput::make('status')
-                             ->columnSpan(['xl' => 3]),
+                             ->columnSpan(['xl' => 1]),
                          DatePicker::make('tgl_berlaku')
-                             ->columnSpan(['xl' => 3])
+                             ->columnSpan(['xl' => 1])
                              ->native(false)
                              ->label('Tanggal Berlaku'),
                          FileUpload::make('file_sk')
-                             ->columnSpan(['xl' => 3])
+                             ->columnSpan(['xl' => 1])
                              ->label('Upload SK'),
                         ])
                         ->visible(fn (
                             Forms\Get $get
                         ) => $get('role') === 'penyelia'),
+
+                    Fieldset::make('Peternak')
+                        ->columns(['xl' => 2])
+                        ->relationship('profile')
+                        ->schema([
+                            Select::make('status_usaha')
+                                ->label('Status Usaha')
+                                ->columnSpan(['xl' => 2])
+                                ->native(false)
+                                ->options([
+                                    'Belum Terdaftar' => 'Belum Terdaftar',
+                                    'Terdaftar' => 'Terdaftar'
+                                ])
+                        ])
+                        ->visible(fn (
+                            Forms\Get $get
+                        ) => $get('role') === 'peternak'),
             ]);
     }
 
