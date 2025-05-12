@@ -89,4 +89,14 @@ class Ternak extends Model
     {
         return $this->belongsTo(Penyelia::class);
     }
+
+    /**
+     * Get the transaksi that sent the ternak.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function transaksi()
+    {
+        return $this->hasOne(Transaksi::class);
+    }
 }

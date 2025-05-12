@@ -7,6 +7,7 @@ use App\Filament\Resources\TernakResource\RelationManagers;
 use App\Models\Ternak;
 use App\Models\Peternak;
 use App\Models\Juleha;
+use App\Models\Penyelia;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -67,6 +68,8 @@ class TernakResource extends Resource
 
     public static function table(Table $table): Table
     {
+        $juleha = Juleha::with('user')->get();
+        $penyelia = Penyelia::with('user')->get();
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('peternak_id')
@@ -90,8 +93,56 @@ class TernakResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\Action::make('sembelih')
+                    ->label('Sembelih')
+                    ->icon('heroicon-o-paper-airplane')
+                    ->form([
+                        Forms\Components\Select::make('juleha_id')
+                            ->label('Juleha')
+                            ->native(false)
+                            ->required()
+                            ->options($juleha->mapWithKeys(
+                                function ($juleha) {
+                                    return $juleha->user ? [
+                                        $juleha->user->id => $juleha->user->name,
+                                    ] : null;
+                                })),
+                        Forms\Components\Select::make('penyelia_id')
+                            ->label('Penyelia')
+                            ->native(false)
+                            ->required()
+                            ->options($penyelia->mapWithKeys(
+                                function ($penyelia) {
+                                    return $penyelia->user ? [
+                                        $penyelia->user->id => $penyelia->user->name,
+                                    ] : null;
+                                })),
+                        Forms\Components\TextInput::make('karkas')
+                            ->label('Berat Karkas (Kg)')
+                            ->numeric()
+                            ->required(),
 
-                Tables\Actions\Action::make('quickUpdate')
+                        Forms\Components\Select::make('kesehatan')
+                            ->label('Kesehatan')
+                            ->options([
+                                'Sehat' => 'Sehat',
+                                'Layak' => 'Layak',
+                            ])->required(),
+                    ])
+                    ->action(function ($record, array $data) {
+                        $record->update([
+                            'juleha_id' => $data['juleha_id'],
+                            'penyelia_id' => $data['penyelia_id'],
+                            'karkas' => $data['karkas'],
+                            'kesehatan' => $data['kesehatan'],
+                            'waktu_sembelih' => now(),
+                        ]);
+                    })
+                    ->modalHeading('Sembelih Ternak')
+                    ->modalSubmitActionLabel('Sembelih')
+                    ->modalWidth('md'), 
+
+                Tables\Actions\Action::make('validasi')
                     ->button()
                     ->icon('heroicon-o-check') // Optional icon
                     ->disabled(function ($record) {
