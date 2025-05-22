@@ -80,4 +80,15 @@ class User extends Authenticatable implements FilamentUser
             default => null,
         };
     }
+
+    /**
+     * Check if user has $role
+     * 
+     * @param string $role
+     * @return bool
+     */
+    public function hasRole(string $role): bool
+    {
+        return $this->role === $role;
+    }
 }

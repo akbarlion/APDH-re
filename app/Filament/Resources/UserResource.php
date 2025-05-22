@@ -219,17 +219,9 @@ class UserResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('email')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('email_verified_at')
-                    ->dateTime()
+                Tables\Columns\TextColumn::make('role')
+                    ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 //
@@ -258,5 +250,34 @@ class UserResource extends Resource
             'create' => Pages\CreateUser::route('/create'),
             'edit' => Pages\EditUser::route('/{record}/edit'),
         ];
+    }
+
+    /*
+     * Role based query builder. Filter based on role
+     * */
+    public static function getEloquentQuery(): Builder
+    {
+        $user = auth()->user();
+        return parent::getEloquentQuery()
+            ->when($user->hasRole('super_admin'), function ($query) {
+                return $query->whereIn('role', ['super_admin', 'admin_rph']);
+            })
+            ->when($user->hasRole('admin_rph'), function ($query) use ($user) {
+                $rph_id = $user->profile?->rph_id;
+
+                // Return the same query but use subquery instead of where
+                return $query->where(function ($query) use ($rph_id) {
+                  $query->whereIn('id', function ($subquery) use ($rph_id) {
+                      $subquery->select('user_id')
+                          ->from('admin_rph') 
+                          ->where('rph_id', $rph_id);
+                  })->orWhereIn('id', function ($subquery) use ($rph_id) {
+                      $subquery->select('user_id')
+                          ->from('penyelia')
+                          ->where('rph_id', $rph_id);
+                  });
+                });
+            })
+            ;
     }
 }
