@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Rph extends Model
 {
@@ -25,9 +26,9 @@ class Rph extends Model
     /**
      * Relationships
      * 
-     * @return row
+     * @return BelongsTo
      */
-    public function penyelia()
+    public function penyelia() : BelongsTo
     {
         return $this->belongsTo(Penyelia::class);
     }

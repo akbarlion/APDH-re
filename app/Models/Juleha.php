@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Juleha extends Model
 {
@@ -22,13 +24,24 @@ class Juleha extends Model
         'upload_sertifikat',
     ];
 
-    /**
-     * Relationships
-     */
-
-    // Lapak belongs to a user
-    public function user()
+    /* *
+     *
+     * Lapak belongs to a user
+     *
+     * @return BelongsTo
+     *
+     * */
+    public function user() : BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    /*
+     * Relasi m2m ke RPH
+     * @return BelongsToMany
+     */
+    public function rph() : BelongsToMany
+    {
+        return $this->belongsToMany(Rph::class, 'juleha_rph');
     }
 }
