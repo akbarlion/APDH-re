@@ -34,6 +34,7 @@ class UserResource extends Resource
     protected static ?string $model = User::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-users';
+    protected static ?int $navigationSort = 2;
 
     private static function rph_selector($columns) {
         $rph_sel = Select::make('rph_id')

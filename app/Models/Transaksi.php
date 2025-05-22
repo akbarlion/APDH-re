@@ -23,7 +23,7 @@ class Transaksi extends Model
      */
     public function iot(): BelongsTo
     {
-        return $this->belongsTo(Iot::class);
+        return $this->belongsTo(IoT::class);
     }
 
     /*
@@ -47,9 +47,10 @@ class Transaksi extends Model
     /*
      * Auto fill 'status_kirim' field with 'dikirim'
      * every time a new record is created
+     * @return void
      */
 
-    protected static function booted()
+    protected static function booted(): void
     {
         static::creating(function ($transaksi) {
             $transaksi->status_kirim = 'dikirim';

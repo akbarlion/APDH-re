@@ -200,4 +200,13 @@ class TernakResource extends Resource
             'edit' => Pages\EditTernak::route('/{record}/edit'),
         ];
     }
+
+    public static function canViewAny(): bool
+    {
+        return in_array(
+            auth()->user()?->role, [
+                'admin_rph', 'juleha', 'penyelia'
+            ]);
+    }
+
 }

@@ -31,12 +31,10 @@ class TransaksiResource extends Resource
     {
         $lapak = Lapak::with('user')->get();
         return $form->schema([
-            /*
             Select::make('iot_id')
-                ->relationship('iot', 'id') // or a readable field like 'name'
+                ->relationship('iot', 'node') // or a readable field like 'name'
                 ->nullable()
                 ->label('IoT'),
-             */
 
             Select::make('lapak_id')
                 ->options($lapak->mapWithKeys(function ($lapak) {
@@ -70,7 +68,7 @@ class TransaksiResource extends Resource
         DateTimePicker::make('waktu_kirim')
             ->default(now())
             ->seconds(false)
-            ->native(false)
+            //->native(false)
             ->required()
             ->label('Waktu Kirim'),
         ]);
@@ -110,4 +108,10 @@ class TransaksiResource extends Resource
             'edit' => Pages\EditTransaksi::route('/{record}/edit'),
         ];
     }
+
+    public static function canViewAny(): bool
+    {
+        return auth()->user()?->role == 'admin_rph';
+    }
+
 }
