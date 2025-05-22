@@ -97,14 +97,25 @@ class UserResource extends Resource
                              ->columnSpan(['xl' => 3]),
                          Select::make('role')
                              ->columnSpan(['xl' => 3])
-                             ->options([
-                                 'super_admin' => 'Super Admin',
-                                 'admin_rph' => 'Admin RPH',
-                                 'penyelia' => 'Penyelia',
-                                 'juleha' => 'Juleha',
-                                 'peternak' => 'Peternak',
-                                 'lapak' => 'Lapak'
-                             ])
+                             ->options(function () {
+                                 $user = auth()->user();
+
+                                 if ($user->hasRole('super_admin')) {
+                                     return [
+                                         'super_admin' => 'Super Admin',
+                                         'admin_rph' => 'Admin RPH',
+                                     ]; 
+                                 }
+
+                                 if ($user->hasRole('admin_rph')) {
+                                     return [
+                                         'admin_rph' => 'Admin RPH',
+                                         'penyelia' => 'Penyelia',
+                                     ];
+                                 }
+
+                                 return [];
+                             })
                              ->native(false)
                              ->required()
                              ->live(),
