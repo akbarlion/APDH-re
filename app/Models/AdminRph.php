@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class AdminRph extends Model
 {
@@ -20,13 +21,13 @@ class AdminRph extends Model
         'rph_id',
     ];
 
-    /**
+    /*
      * Relationships
      *
-     * Admin RPH belongsTo RPH
+     * @return BelongsTo
      */
 
-    public function rph()
+    public function rph() : BelongsTo
     {
         return $this->belongsTo(Rph::class);
     }
