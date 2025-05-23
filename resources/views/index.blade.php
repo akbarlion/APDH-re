@@ -8,7 +8,7 @@
     <title>APDH - Sistem Informasi Pelacakan Daging Halal</title>
     <link rel="icon" type="image/png" href="/landing_page/favicon.png">
     
-    <link href="/py/static/bootstrap-icons.min.css" rel="stylesheet">
+    <link href="/landing_page/bootstrap-icons.min.css" rel="stylesheet">
     
     <link href="/landing_page/css2_002.css" rel="stylesheet">
     <link href="/landing_page/css2.css" rel="stylesheet">
@@ -27,7 +27,7 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarResponsive">
             
-            <a class="btn btn-primary rounded-pill px-3 mb-2 mb-lg-0" href="/py/login">
+            <a class="btn btn-primary rounded-pill px-3 mb-2 mb-lg-0" href="/app">
                 <span class="d-flex align-items-center text-white">
                     <i class="bi-person-fill me-2"></i>
                     <span class="small">Log In</span>
