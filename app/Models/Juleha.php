@@ -40,8 +40,26 @@ class Juleha extends Model
      * Relasi m2m ke RPH
      * @return BelongsToMany
      */
-    public function rph() : BelongsToMany
+    public function rphs() : BelongsToMany
     {
-        return $this->belongsToMany(Rph::class, 'juleha_rph');
+        return $this->belongsToMany(
+            Rph::class,       // Related model
+            'juleha_rph',     // Pivot table
+            'juleha_id',      // Foreign key on pivot → Juleha.user_id
+            'rph_id',         // Foreign key on pivot → Rph.id
+            'user_id',        // Local key on Juleha
+            'id'              // Local key on Rph
+        );
+    }
+
+
+    /* Auto fill rph_id from active user's rph_id
+     * @return void
+     * */
+    protected static function booted(): void
+    {
+        static::creating(function ($juleha) {
+            $juleha->rph_id = auth()->user()->rph_id;
+        });
     }
 }
