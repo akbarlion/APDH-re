@@ -51,12 +51,11 @@ class RphResource extends Resource
             Forms\Components\Select::make('penyelia_id')
                 ->native(false)
                 ->options(function () {
-                    $penyelias = User::where('role', 'penyelia')
-                        ->with('profile')
-                        ->get();
+                    $penyelias = User::where('role', 'penyelia')->get();
 
                     $options = [];
                     foreach ($penyelias as $penyelia) {
+                        $penyelia->load('profile');
                         if ($penyelia->profile) {
                             $options[$penyelia->id] = $penyelia->profile->name;
                         }
