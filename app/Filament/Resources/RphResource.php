@@ -53,7 +53,7 @@ class RphResource extends Resource
                 ->options(function () {
                     $options = User::where('role', 'penyelia') // 👈 filter by role here
                         ->get()
-                        ->mapWithKeys(fn ($user) => [$user->id => $user->profile->name])
+                        ->mapWithKeys(fn ($user) => [$user->id => $user->name])
                         ->toArray();
                     return $options;
                     }) 
