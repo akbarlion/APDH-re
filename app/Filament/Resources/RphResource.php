@@ -51,10 +51,11 @@ class RphResource extends Resource
             Forms\Components\Select::make('penyelia_id')
                 ->native(false)
                 ->options(function () {
-                    return User::where('role', 'penyelia') // 👈 filter by role here
+                    $options = User::where('role', 'penyelia') // 👈 filter by role here
                         ->get()
                         ->mapWithKeys(fn ($user) => [$user->id => $user->profile->name])
                         ->toArray();
+                    return $options;
                     }) 
                 ->default(function ($record) {
                     if ($record && $record->penyelia_id) {
