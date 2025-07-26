@@ -32,6 +32,7 @@ class JulehaResource extends Resource
             ->schema([
                 TextInput::make('nomor_sertifikat')
                     ->columnSpan(['xl' => 3])
+                    ->default(request()->get('nomor_sertifikat'))
                     ->label('Nomor Sertifikat'),
                 TextInput::make('masa_sertifikat')
                     ->columnSpan(['xl' => 3])

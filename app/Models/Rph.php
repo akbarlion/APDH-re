@@ -32,4 +32,21 @@ class Rph extends Model
     {
         return $this->belongsTo(Penyelia::class);
     }
+
+    /**
+     * Relationships    
+     *
+     * @return BelongsToMany
+     */
+    public function julehas() : BelongsToMany
+    {
+        return $this->belongsToMany(
+            Juleha ::class,
+            'juleha_rph',
+            'rph_id',
+            'juleha_id',
+            'user_id',
+            'id'
+        );
+    }
 }

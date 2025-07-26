@@ -8,6 +8,7 @@
 
 namespace App\Filament\Resources;
 
+use Filament\Facades\Filament;
 use App\Filament\Resources\UserResource\Pages;
 use App\Filament\Resources\UserResource\RelationManagers;
 use App\Models\User;
@@ -21,6 +22,7 @@ use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\Hidden;
 
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -111,6 +113,7 @@ class UserResource extends Resource
                                      return [
                                          'admin_rph' => 'Admin RPH',
                                          'penyelia' => 'Penyelia',
+                                         'peternak' => 'Peternak',
                                      ];
                                  }
 
@@ -185,7 +188,6 @@ class UserResource extends Resource
                         ->columns(['xl' => 2])
                         ->relationship('profile')
                         ->schema([
-                         self::rph_selector(1),
                          TextInput::make('nip')
                              ->columnSpan(['xl' => 1])
                              ->label('Nomor Induk Penyelia'),

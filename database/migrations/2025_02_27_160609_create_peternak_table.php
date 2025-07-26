@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('peternak', function (Blueprint $table) {
             $table->foreignId('user_id')->primary()->nullable();
+            $table->foreignId('rph_id')->nullable();
             $table->string('status_usaha')->nullable();
             $table->timestamps();
         });

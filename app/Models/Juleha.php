@@ -51,15 +51,4 @@ class Juleha extends Model
             'id'              // Local key on Rph
         );
     }
-
-
-    /* Auto fill rph_id from active user's rph_id
-     * @return void
-     * */
-    protected static function booted(): void
-    {
-        static::creating(function ($juleha) {
-            $juleha->rph_id = auth()->user()->rph_id;
-        });
-    }
 }
