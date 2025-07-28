@@ -13,7 +13,7 @@ class CreateJuleha extends CreateRecord
 
     protected function afterCreate(): void
     {
-        $this->record->rphs()->attach(
+        $this->record->profile?->rphs()->attach(
             Filament::auth()->user()->profile?->rph_id
         );
     }
