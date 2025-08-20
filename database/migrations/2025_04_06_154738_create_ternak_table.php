@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('peternak_id')->nullable();
             $table->foreignId('juleha_id')->nullable();
             $table->foreignId('penyelia_id')->nullable();
+            $table->foreignId('rph_id')->nullable();
             $table->string('img')->nullable();
             $table->float('karkas')->nullable();
             $table->string('jenis')->nullable();

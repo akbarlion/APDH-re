@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Blockchain extends Model
 {
+    protected $table = 'blockchain';
     public $timestamps = false;
 
     protected $fillable = [
@@ -18,12 +19,12 @@ class Blockchain extends Model
     public static function addBlock(string $transData): self
     {
         // Step 1: Ensure genesis block exists
-        if (! self::exists()) {
+        if (self::count() == 0) {
             self::create([
                 'timestamp'  => now(),
-                'prev_hash'  => '0',
-                'curr_hash'  => hash('sha256', now() . '0' . 'Genesis Block'),
-                'trans_data' => 'Genesis Block',
+                'previous_hash'  => '0',
+                'current_hash'  => hash('sha256', now() . '0' . 'Genesis Block'),
+                'transaction' => 'Genesis Block',
             ]);
         }
 
@@ -32,13 +33,13 @@ class Blockchain extends Model
 
         // Step 3: Create new block
         $timestamp = now();
-        $prevHash = $lastBlock->curr_hash;
+        $prevHash = $lastBlock->current_hash;
 
         return self::create([
             'timestamp'  => $timestamp,
-            'prev_hash'  => $prevHash,
-            'curr_hash'  => hash('sha256', $timestamp . $prevHash . $transData),
-            'trans_data' => $transData,
+            'previous_hash'  => $prevHash,
+            'current_hash'  => hash('sha256', $timestamp . $prevHash . $transData),
+            'transaction' => $transData,
         ]);
     }
 }

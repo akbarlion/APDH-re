@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use Filament\Facades\Filament;
 use App\Filament\Resources\TernakResource\Pages;
 use App\Filament\Resources\TernakResource\RelationManagers;
 use App\Models\Ternak;
@@ -20,6 +21,8 @@ use Carbon\Carbon;
 class TernakResource extends Resource
 {
     protected static ?string $model = Ternak::class;
+    protected static ?string $navigationLabel = 'Ternak';
+    protected static ?string $label = 'Ternak';
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
@@ -28,6 +31,8 @@ class TernakResource extends Resource
         $peternaks = Peternak::with('user')->get();
         return $form
             ->schema([
+                Forms\Components\Hidden::make('rph_id')
+                    ->default(fn () => Filament::auth()->user()->profile?->rph_id),
                 Forms\Components\TextInput::make('bobot')
                     ->label('Bobot')
                     ->type('number')
@@ -140,11 +145,22 @@ class TernakResource extends Resource
                     })
                     ->modalHeading('Sembelih Ternak')
                     ->modalSubmitActionLabel('Sembelih')
-                    ->modalWidth('md'), 
+                    ->modalWidth('lg') 
+                    ->label(function ($record) {
+                        return $record->karkas == null ? "Sembelih" : "Telah Disembelih";
+                    })
+                    ->disabled(function ($record) {
+                        return $record->karkas !== null;
+                    }),
 
                 Tables\Actions\Action::make('validasi')
                     ->button()
                     ->icon('heroicon-o-check') // Optional icon
+                    ->visible(function ($record) {
+                        $role = auth()->user()->role;
+                        $show = $role == 'penyelia' || $role == 'juleha';
+                        return $show;
+                    })
                     ->disabled(function ($record) {
                         $role = auth()->user()->role;
                         if ($role == 'penyelia') {

@@ -75,7 +75,7 @@ class User extends Authenticatable implements FilamentUser
 
             'super_admin' => $this->hasOne(SuperAdmin::class),
 
-            'lapak' => $this->hasOne(lapak::class),
+            'lapak' => $this->hasOne(Lapak::class),
 
             default => null,
         };

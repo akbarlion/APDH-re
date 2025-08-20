@@ -10,6 +10,11 @@ class ListTransaksis extends ListRecords
 {
     protected static string $resource = TransaksiResource::class;
 
+    public function getTitle(): string
+    {
+        return 'Transaksi';
+    }
+
     protected function getHeaderActions(): array
     {
         return [

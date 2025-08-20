@@ -13,6 +13,7 @@ use App\Filament\Resources\UserResource\Pages;
 use App\Filament\Resources\UserResource\RelationManagers;
 use App\Models\User;
 use App\Models\Rph;
+use App\Models\Pasar;
 
 use Filament\Forms;
 use Filament\Forms\Components\Fieldset;
@@ -167,23 +168,6 @@ class UserResource extends Resource
                             Forms\Get $get
                         ) => $get('role') == 'admin_rph'),
 
-                    Fieldset::make('Juleha')
-                        ->relationship('profile')
-                        ->schema([
-                         TextInput::make('nomor_sertifikat')
-                             ->columnSpan(['xl' => 3])
-                             ->label('Nomor Sertifikat'),
-                         TextInput::make('masa_sertifikat')
-                             ->columnSpan(['xl' => 3])
-                             ->label('Masa Berlaku'),
-                         TextInput::make('upload_sertifikat')
-                             ->columnSpan(['xl' => 3])
-                             ->label('Upload Sertifikat'),
-                        ])
-                        ->visible(fn (
-                            Forms\Get $get
-                        ) => $get('role') === 'juleha'),
-
                     Fieldset::make('Penyelia')
                         ->columns(['xl' => 2])
                         ->relationship('profile')
@@ -204,23 +188,6 @@ class UserResource extends Resource
                         ->visible(fn (
                             Forms\Get $get
                         ) => $get('role') === 'penyelia'),
-
-                    Fieldset::make('Peternak')
-                        ->columns(['xl' => 2])
-                        ->relationship('profile')
-                        ->schema([
-                            Select::make('status_usaha')
-                                ->label('Status Usaha')
-                                ->columnSpan(['xl' => 2])
-                                ->native(false)
-                                ->options([
-                                    'Belum Terdaftar' => 'Belum Terdaftar',
-                                    'Terdaftar' => 'Terdaftar'
-                                ])
-                        ])
-                        ->visible(fn (
-                            Forms\Get $get
-                        ) => $get('role') === 'peternak'),
             ]);
     }
 

@@ -18,7 +18,7 @@ return new class extends Migration
             $table->foreignId('ternak_id')->nullable();
             $table->float('jumlah');
             $table->string('waktu_kirim');
-            $table->string('waktu_selesai_kirim');
+            $table->string('waktu_selesai_kirim')->nullable();
             $table->string('status_kirim');
             $table->timestamps();
         });

@@ -24,6 +24,8 @@ use Carbon\Carbon;
 class TransaksiResource extends Resource
 {
     protected static ?string $model = Transaksi::class;
+    protected static ?string $navigationLabel = 'Transaksi';
+    protected static ?string $label = 'Transaksi';
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
@@ -78,7 +80,10 @@ class TransaksiResource extends Resource
     {
         return $table
             ->columns([
-                //
+                Tables\Columns\TextColumn::make('lapak.user.name')
+                    ->label('Nama Lapak'),
+                Tables\Columns\TextColumn::make('jumlah'),
+                Tables\Columns\TextColumn::make('status_kirim'),
             ])
             ->filters([
                 //
