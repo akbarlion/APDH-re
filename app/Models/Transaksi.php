@@ -3,6 +3,10 @@
 namespace App\Models;
 
 use App\Models\Blockchain;
+use App\Models\User;
+use App\Models\Rph;
+use App\Models\Lapak;
+use App\Models\Ternak;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -12,6 +16,7 @@ class Transaksi extends Model
         'iot_id',
         'lapak_id',
         'ternak_id',
+        'rph_id',
         'jumlah',
         'waktu_kirim',
         'waktu_selesai_kirim',
@@ -57,8 +62,9 @@ class Transaksi extends Model
             $transaksi->status_kirim = 'dikirim';
         });
 
-        static::created(function ($transaksi) {
-            Blockchain::addBlock($transaksi->toJson()); 
+        static::saved(function ($transaksi) {
+            $transdata = new TransData($transaksi);
+            Blockchain::addBlock($transdata->json()); 
         });
     }
 
@@ -84,20 +90,28 @@ class TransData {
 
     public function __construct($transaksi) {
         $this->id_transaksi = $transaksi->id;
-        $this->id_csa = $transaksi->iot->id_csa;
-        $this->nama_rph = $transaksi->iot->rph->nama_rph;
-        $this->nama_lapak = $transaksi->lapak->user->name;
-        $this->nama_juleha = $transaksi->ternak->juleha->nama_juleha;
-        $this->nama_peternak = $transaksi->ternak->peternak->name;
+        $this->nama_rph = Rph::find($transaksi->rph_id)?->name;
+        $this->nama_lapak = User::find($transaksi->lapak_id)?->name;
+        $this->nama_juleha = User::find( 
+            Ternak::find($transaksi->ternak_id)?->juleha_id
+        )?->name;
+        $this->nama_peternak = User::find(
+            Ternak::find($transaksi->ternak_id)?->penyelia_id
+        )?->name;
         $this->jumlah = $transaksi->jumlah;
-        $this->waktu_sembelih = $transaksi->waktu_sembelih;
+        $this->waktu_sembelih = Ternak::find($transaksi->ternak_id)?->waktu_sembelih;
         $this->waktu_kirim = $transaksi->waktu_kirim;
-        $this->waktu_selesai_kirim = $transaksi->waktu_selesai_kirim;
-        $this->suhu_min = $transaksi->suhu_min;
-        $this->suhu_max = $transaksi->suhu_max;
-        $this->kelembapan_min = $transaksi->kelembapan_min;
-        $this->kelembapan_max = $transaksi->kelembapan_max;
-        $this->status_validasi = $transaksi->status_validasi;
-        $this->waktu_upload = $transaksi->created_at;
+        $this->waktu_selesai_kirim = null;
+        $this->id_csa = null;
+        $this->suhu_min = null;
+        $this->suhu_max = null;
+        $this->kelembapan_min = null;
+        $this->kelembapan_max = null;
+        $this->status_validasi = "Dalam proses";
+        $this->waktu_upload = date('Y-m-d H:i:s');
+    }
+
+    public function json() {
+        return json_encode($this);
     }
 }

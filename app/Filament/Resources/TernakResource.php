@@ -33,12 +33,11 @@ class TernakResource extends Resource
             ->schema([
                 Forms\Components\Hidden::make('rph_id')
                     ->default(fn () => Filament::auth()->user()->profile?->rph_id),
+                /*
                 Forms\Components\TextInput::make('bobot')
                     ->label('Bobot')
-                    ->type('number')
-                    ->step('0.01')
-                    ->minValue('0')
-                    ->required(),
+                    ->minValue('0'),
+                 */
                 Forms\Components\Select::make('jenis')
                     ->label('Jenis')
                     ->options([

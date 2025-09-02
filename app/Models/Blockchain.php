@@ -8,6 +8,9 @@ class Blockchain extends Model
 {
     protected $table = 'blockchain';
     public $timestamps = false;
+    protected $casts = [
+        'transaction' => 'json'
+    ];
 
     protected $fillable = [
         'timestamp',
@@ -24,7 +27,7 @@ class Blockchain extends Model
                 'timestamp'  => now(),
                 'previous_hash'  => '0',
                 'current_hash'  => hash('sha256', now() . '0' . 'Genesis Block'),
-                'transaction' => 'Genesis Block',
+                'transaction' => '{"0":"Genesis Block"}',
             ]);
         }
 

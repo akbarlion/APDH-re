@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use Filament\Facades\Filament;
 use App\Filament\Resources\TransaksiResource\Pages;
 use App\Filament\Resources\TransaksiResource\RelationManagers;
 use App\Models\Transaksi;
@@ -33,6 +34,8 @@ class TransaksiResource extends Resource
     {
         $lapak = Lapak::with('user')->get();
         return $form->schema([
+                Forms\Components\Hidden::make('rph_id')
+                    ->default(fn () => Filament::auth()->user()->profile?->rph_id),
             Select::make('iot_id')
                 ->relationship('iot', 'node') // or a readable field like 'name'
                 ->nullable()

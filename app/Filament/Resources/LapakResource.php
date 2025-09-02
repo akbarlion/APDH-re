@@ -6,6 +6,7 @@ use App\Filament\Resources\LapakResource\Pages;
 use App\Filament\Resources\LapakResource\RelationManagers;
 use App\Models\Lapak;
 use App\Models\User;
+use App\Models\Pasar;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -58,9 +59,10 @@ class LapakResource extends Resource
                     ->relationship('profile')
                     ->schema([
                         Forms\Components\TextInput::make('no_lapak'),
-                        Forms\Components\TextInput::make('pasar_id')
-                            ->required()
-                            ->numeric(),
+                        Forms\Components\Select::make('pasar_id')
+                            ->native(false)
+                            ->options(Pasar::all()->pluck('name', 'id'))
+                            ->required(),
                         Forms\Components\TextInput::make('telp')
                             ->tel(),
                     ])
