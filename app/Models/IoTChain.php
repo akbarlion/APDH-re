@@ -4,9 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Blockchain extends Model
+class Iotchain extends Model
 {
-    protected $table = 'blockchain';
+    protected $table = 'iotchain';
     public $timestamps = false;
     protected $casts = [
         'transaction' => 'json',
@@ -44,5 +44,10 @@ class Blockchain extends Model
             'current_hash' => hash('sha256', $timestamp . $prevHash . $transData),
             'transaction' => json_decode($transData),
         ]);
+    }
+
+    public static function getLatestBlock(): self
+    {
+        return self::latest('id')->first(); 
     }
 }

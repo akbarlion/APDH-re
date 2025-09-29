@@ -23,7 +23,7 @@ class Peternak extends Model
 
     /**
      * Relationships
-     * 
+     *
      * @return BelongsTo
      */
     public function user(): BelongsTo

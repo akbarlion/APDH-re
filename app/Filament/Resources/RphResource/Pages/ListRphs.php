@@ -13,8 +13,7 @@ class ListRphs extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make()
-            ->label('New RPH'),
+            Actions\CreateAction::make()->label('New RPH'),
         ];
     }
 }

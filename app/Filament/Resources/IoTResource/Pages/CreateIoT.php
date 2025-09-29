@@ -9,4 +9,9 @@ use Filament\Resources\Pages\CreateRecord;
 class CreateIoT extends CreateRecord
 {
     protected static string $resource = IoTResource::class;
+
+    protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('index');
+    }
 }

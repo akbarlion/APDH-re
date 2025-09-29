@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Facades\DB;
 use App\Models\Blockchain;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class BcController extends Controller
 {
@@ -21,12 +21,10 @@ class BcController extends Controller
      */
     public function show($transaksi_id)
     {
-        $block = Blockchain::whereRaw(
-                'json_extract(
+        $block = Blockchain::whereRaw('json_extract(
                     "transaction",
                     "$.id_transaksi"
-                ) = CAST(? AS INTEGER)', [$transaksi_id]
-            )->get();
+                ) = CAST(? AS INTEGER)', [$transaksi_id])->get();
 
         return $block;
     }

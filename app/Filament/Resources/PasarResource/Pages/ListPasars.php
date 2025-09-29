@@ -10,6 +10,11 @@ class ListPasars extends ListRecords
 {
     protected static string $resource = PasarResource::class;
 
+    public function getTitle(): string
+    {
+        return 'Pasar';
+    }
+
     protected function getHeaderActions(): array
     {
         return [

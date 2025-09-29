@@ -9,4 +9,9 @@ use Filament\Resources\Pages\CreateRecord;
 class CreateLapak extends CreateRecord
 {
     protected static string $resource = LapakResource::class;
+
+    protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('index');
+    }
 }

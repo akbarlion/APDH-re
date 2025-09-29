@@ -4,16 +4,14 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\JulehaResource\Pages;
 use App\Filament\Resources\JulehaResource\RelationManagers;
-
 use App\Models\Juleha;
 use App\Models\User;
 use Filament\Forms;
-use Filament\Forms\Form;
 use Filament\Forms\Components\Fieldset;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Hidden;
-
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -22,69 +20,61 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class JulehaResource extends Resource
 {
-    protected static ?string $model = User::class;
+    protected static null|string $model = User::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-    protected static ?string $navigationLabel = 'Juleha';
-    protected static ?string $label = 'Juleha';
+    protected static null|string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static null|string $navigationLabel = 'Juleha';
+    protected static null|string $breadcrumb = 'Juleha';
 
     public static function form(Form $form): Form
     {
-        return $form
-            ->schema([
-                TextInput::make('name')
-                    ->columnSpan(['xl' => 3])
-                    ->label('Nama Lengkap')
-                    ->required(),
-                TextInput::make('email')
-                    ->columnSpan(['xl' => 3])
-                    ->email()
-                    ->required(),
-                TextInput::make('password')
-                    ->columnSpan(['xl' => 3])
-                    ->password()
-                    ->confirmed()
-                    ->required(),
-                TextInput::make('password_confirmation')
-                    ->columnSpan(['xl' => 3])
-                    ->password()
-                    ->required()
-                    ->maxLength(255)
-                    ->same('password')
-                    ->dehydrated(false)
-                    ->label('Confirm Password'),
-                TextInput::make('phone')
-                    ->columnSpan(['xl' => 3])
-                    ->label('No Telp'),
-                Textarea::make('alamat')
-                    ->columnSpan(['xl' => 3]),
-                Hidden::make('role')
-                    ->default('juleha'),
-                Fieldset::make('User')
-                    ->relationship('profile')
-                    ->schema([
-                        TextInput::make('nomor_sertifikat')
-                            ->columnSpan(['xl' => 3])
-                            ->default(request()->get('nomor_sertifikat'))
-                            ->label('Nomor Sertifikat'),
-                        TextInput::make('masa_sertifikat')
-                            ->columnSpan(['xl' => 3])
-                            ->label('Masa Berlaku'),
-                        TextInput::make('upload_sertifikat')
-                            ->columnSpan(['xl' => 3])
-                            ->label('Upload Sertifikat'),
-                    ])
-            ]);
+        return $form->schema([
+            TextInput::make('name')
+                ->columnSpan(['xl' => 3])
+                ->label('Nama Lengkap')
+                ->required(),
+            TextInput::make('email')
+                ->columnSpan(['xl' => 3])
+                ->email()
+                ->required(),
+            TextInput::make('password')
+                ->columnSpan(['xl' => 3])
+                ->password()
+                ->confirmed()
+                ->required(),
+            TextInput::make('password_confirmation')
+                ->columnSpan(['xl' => 3])
+                ->password()
+                ->required()
+                ->maxLength(255)
+                ->same('password')
+                ->dehydrated(false)
+                ->label('Confirm Password'),
+            TextInput::make('phone')->columnSpan(['xl' => 3])->label('No Telp'),
+            Textarea::make('alamat')->columnSpan(['xl' => 3]),
+            Hidden::make('role')->default('juleha'),
+            Fieldset::make('User')
+                ->relationship('profile')
+                ->schema([
+                    TextInput::make('nomor_sertifikat')
+                        ->columnSpan(['xl' => 3])
+                        ->default(request()->get('nomor_sertifikat'))
+                        ->label('Nomor Sertifikat'),
+                    TextInput::make('masa_sertifikat')->columnSpan(['xl' => 3])->label('Masa Berlaku'),
+                    FileUpload::make('upload_sertifikat')
+                        ->directory('sertifikat_juleha')
+                        ->columnSpan(['xl' => 3])
+                        ->label('Upload Sertifikat'),
+                ]),
+        ]);
     }
 
     public static function table(Table $table): Table
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('nomor_sertifikat')
-                    ->label('Nomor Sertifikat'),
-                Tables\Columns\TextColumn::make('user.name')
-                    ->label('Nama Lengkap'),
+                Tables\Columns\TextColumn::make('nomor_sertifikat')->label('Nomor Sertifikat'),
+                Tables\Columns\TextColumn::make('user.name')->label('Nama Lengkap'),
             ])
             ->filters([
                 //
@@ -133,14 +123,12 @@ class JulehaResource extends Resource
             return parent::getEloquentQuery()->whereRaw('1 = 0');
         }
 
-
         if (request()->routeIs('filament.admin.resources.julehas.edit')) {
             return parent::getEloquentQuery(); // or your safe fallback
         }
 
-        return Juleha::with('user')
-            ->whereHas('rphs', function ($query) use ($user) {
-                $query->where('rph_id', $user->profile->rph_id);
-            });
+        return Juleha::with('user')->whereHas('rphs', function ($query) use ($user) {
+            $query->where('rph_id', $user->profile->rph_id);
+        });
     }
 }

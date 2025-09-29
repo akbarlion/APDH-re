@@ -15,31 +15,26 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class PasarResource extends Resource
 {
-    protected static ?string $model = Pasar::class;
-    protected static ?string $navigationLabel = 'Pasar';
-    protected static ?string $label = 'Pasar';
+    protected static null|string $model = Pasar::class;
+    protected static null|string $navigationLabel = 'Pasar';
+    protected static null|string $breadcrumb = 'Pasar';
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static null|string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     public static function form(Form $form): Form
     {
-        return $form
-            ->schema([
-                Forms\Components\TextInput::make('name')
-                    ->required(),
-                Forms\Components\TextInput::make('alamat')
-                    ->required(),
-            ]);
+        return $form->schema([
+            Forms\Components\TextInput::make('name')->required(),
+            Forms\Components\TextInput::make('alamat')->required(),
+        ]);
     }
 
     public static function table(Table $table): Table
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('alamat')
-                    ->searchable(),
+                Tables\Columns\TextColumn::make('name')->searchable(),
+                Tables\Columns\TextColumn::make('alamat')->searchable(),
             ])
             ->filters([
                 //

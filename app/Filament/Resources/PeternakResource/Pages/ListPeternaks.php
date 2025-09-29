@@ -10,6 +10,11 @@ class ListPeternaks extends ListRecords
 {
     protected static string $resource = PeternakResource::class;
 
+    public function getTitle(): string
+    {
+        return 'Peternak';
+    }
+
     protected function getHeaderActions(): array
     {
         return [

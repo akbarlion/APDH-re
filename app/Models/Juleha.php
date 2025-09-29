@@ -31,7 +31,7 @@ class Juleha extends Model
      * @return BelongsTo
      *
      * */
-    public function user() : BelongsTo
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');
     }
@@ -40,15 +40,8 @@ class Juleha extends Model
      * Relasi m2m ke RPH
      * @return BelongsToMany
      */
-    public function rphs() : BelongsToMany
+    public function rphs(): BelongsToMany
     {
-        return $this->belongsToMany(
-            Rph::class,       // Related model
-            'juleha_rph',     // Pivot table
-            'juleha_id',      // Foreign key on pivot → Juleha.user_id
-            'rph_id',         // Foreign key on pivot → Rph.id
-            'user_id',        // Local key on Juleha
-            'id'              // Local key on Rph
-        );
+        return $this->belongsToMany(Rph::class, 'juleha_rph', 'juleha_id', 'rph_id', 'user_id', 'id'); // Related model // Pivot table // Foreign key on pivot → Juleha.user_id // Foreign key on pivot → Rph.id // Local key on Juleha // Local key on Rph
     }
 }

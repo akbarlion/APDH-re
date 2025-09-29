@@ -27,7 +27,7 @@ class AdminRph extends Model
      * @return BelongsTo
      */
 
-    public function rph() : BelongsTo
+    public function rph(): BelongsTo
     {
         return $this->belongsTo(Rph::class);
     }

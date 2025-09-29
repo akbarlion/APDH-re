@@ -10,6 +10,11 @@ class ListTernaks extends ListRecords
 {
     protected static string $resource = TernakResource::class;
 
+    public function getTitle(): string
+    {
+        return 'Ternak';
+    }
+
     protected function getHeaderActions(): array
     {
         return [

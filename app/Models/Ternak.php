@@ -2,15 +2,15 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class Ternak extends Model
 {
-	 use HasFactory;
+    use HasFactory;
 
     protected $table = 'ternak';
 
@@ -28,6 +28,8 @@ class Ternak extends Model
         'bobot',
         'waktu_daftar',
         'no_antri',
+        'sisa_karkas',
+        'rph_id',
     ];
 
     protected $casts = [
@@ -53,14 +55,23 @@ class Ternak extends Model
             $today = Carbon::now('Asia/Jakarta')->toDateString();
 
             // Get the last assigned no_antri for today
-            $lastAntri = self::whereDate('created_at', $today)
-                ->max('no_antri');
+            $lastAntri = self::whereDate('created_at', $today)->max('no_antri');
 
             $ternak->no_antri = $lastAntri ? $lastAntri + 1 : 1;
 
             // input NULL to juleha_id and penyelia_id if they are not inserted
             $ternak->juleha_id = $ternak->juleha_id ?? null;
             $ternak->penyelia_id = $ternak->penyelia_id ?? null;
+        });
+
+        static::updating(function (Ternak $ternak) {
+            // sisa_karkas kosong (data karkas baru diisi)
+            if (!isset($ternak->sisa_karkas)) {
+                // Cek apakah ternak->karkas ada (diisi pas sembelih)
+                if (isset($ternak->karkas)) {
+                    $ternak->sisa_karkas = $ternak->karkas;
+                }
+            } 
         });
     }
 

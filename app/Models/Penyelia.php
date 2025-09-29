@@ -29,7 +29,7 @@ class Penyelia extends Model
      * User relationship
      * @return BelongsTo
      */
-    public function user() : BelongsTo
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
@@ -38,7 +38,7 @@ class Penyelia extends Model
      * Rph relationship
      * @return BelongsTo
      */
-    public function rph() : BelongsTo
+    public function rph(): BelongsTo
     {
         return $this->belongsTo(Rph::class);
     }

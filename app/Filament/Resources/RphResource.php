@@ -4,8 +4,8 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\RphResource\Pages;
 use App\Filament\Resources\RphResource\RelationManagers;
-use App\Models\Rph;
 use App\Models\Penyelia;
+use App\Models\Rph;
 use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -17,26 +17,21 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class RphResource extends Resource
 {
-    protected static ?string $model = Rph::class;
+    protected static null|string $model = Rph::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-home-modern';
-    protected static ?string $navigationLabel = 'RPH';
+    protected static null|string $navigationIcon = 'heroicon-o-home-modern';
+    protected static null|string $navigationLabel = 'RPH';
+    protected static null|string $breadcrumb = 'PRH';
 
     // nav order
-    protected static ?int $navigationSort = 1;
+    protected static null|int $navigationSort = 1;
 
     public static function form(Form $form): Form
     {
         return $form->schema([
-            Forms\Components\TextInput::make('name')
-                ->required()
-                ->maxLength(255),
-            Forms\Components\TextInput::make('alamat')
-                ->required()
-                ->maxLength(255),
-            Forms\Components\TextInput::make('phone')
-                ->required()
-                ->maxLength(20), // Adjust length as needed
+            Forms\Components\TextInput::make('name')->required()->maxLength(255),
+            Forms\Components\TextInput::make('alamat')->required()->maxLength(255),
+            Forms\Components\TextInput::make('phone')->required()->maxLength(20), // Adjust length as needed
             Forms\Components\Select::make('status_sertifikasi')
                 ->options([
                     'sudah' => 'Sudah',
@@ -53,10 +48,10 @@ class RphResource extends Resource
                 ->options(function () {
                     $options = User::where('role', 'penyelia') // 👈 filter by role here
                         ->get()
-                        ->mapWithKeys(fn ($user) => [$user->id => $user->name])
+                        ->mapWithKeys(fn($user) => [$user->id => $user->name])
                         ->toArray();
                     return $options;
-                    }) 
+                })
                 ->default(function ($record) {
                     if ($record && $record->penyelia_id) {
                         return $record->penyelia_id;
@@ -73,24 +68,21 @@ class RphResource extends Resource
                     return null;
                 })
                 ->nullable(),
-            ]);
+        ]);
     }
 
-     protected function getFormActions(): array
-     {
-         return [
-              $this->getCreateFormAction()
-                ->label('Add RPH')
-                ->formId('form'),
-         ];
-     }
+    protected function getFormActions(): array
+    {
+        return [
+            $this->getCreateFormAction()->label('Add RPH')->formId('form'),
+        ];
+    }
 
     public static function table(Table $table): Table
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name')
-                    ->searchable(),
+                Tables\Columns\TextColumn::make('name')->searchable(),
                 //
             ])
             ->filters([

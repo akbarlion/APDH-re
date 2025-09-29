@@ -9,4 +9,9 @@ use Filament\Resources\Pages\CreateRecord;
 class CreatePasar extends CreateRecord
 {
     protected static string $resource = PasarResource::class;
+
+    protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('index');
+    }
 }

@@ -2,13 +2,16 @@
 
 namespace App\Filament\Resources;
 
-use Filament\Facades\Filament;
+use Filament\Tables\Filters\Filter;
+
 use App\Filament\Resources\TernakResource\Pages;
 use App\Filament\Resources\TernakResource\RelationManagers;
-use App\Models\Ternak;
-use App\Models\Peternak;
 use App\Models\Juleha;
 use App\Models\Penyelia;
+use App\Models\Peternak;
+use App\Models\Ternak;
+use Carbon\Carbon;
+use Filament\Facades\Filament;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -16,58 +19,54 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Carbon\Carbon;
 
 class TernakResource extends Resource
 {
-    protected static ?string $model = Ternak::class;
-    protected static ?string $navigationLabel = 'Ternak';
-    protected static ?string $label = 'Ternak';
+    protected static null|string $model = Ternak::class;
+    protected static null|string $navigationLabel = 'Ternak';
+    protected static null|string $breadcrumb = 'Ternak';
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static null|string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     public static function form(Form $form): Form
     {
         $peternaks = Peternak::with('user')->get();
-        return $form
-            ->schema([
-                Forms\Components\Hidden::make('rph_id')
-                    ->default(fn () => Filament::auth()->user()->profile?->rph_id),
-                /*
-                Forms\Components\TextInput::make('bobot')
-                    ->label('Bobot')
-                    ->minValue('0'),
-                 */
-                Forms\Components\Select::make('jenis')
-                    ->label('Jenis')
-                    ->options([
-                        'Kambing' => 'Kambing',
-                        'Sapi' => 'Sapi',
-                        'Kerbau' => 'Kerbau',
-                    ])
-                    ->native(false)
-                    ->required(),
-                Forms\Components\Select::make('peternak_id')
-                    ->label('Peternak')
-                    ->native(false)
-                    ->options(
-                        $peternaks->mapWithKeys(function ($peternak) {
-                            return $peternak->user ? [
-                                $peternak->user->id => $peternak->user->name,
-                            ] : null;
-                        })
-                    )
-                    ->disabled(function ($get, $state) use ($peternaks) {
-                        return $peternaks->count() === 0;
-                    })
-                    ->hint(function ($state) use ($peternaks) {
-                        if ($peternaks->count() === 0) {
-                            return 'Buat data Peternak terlebih dahulu';
-                        }
-                        return null;
-                    })
-                    ->required(),
-            ]);
+        return $form->schema([
+            Forms\Components\Hidden::make('rph_id')->default(fn() => Filament::auth()->user()->profile?->rph_id),
+            /*
+             * Forms\Components\TextInput::make('bobot')
+             * ->label('Bobot')
+             * ->minValue('0'),
+             */
+            Forms\Components\Select::make('jenis')
+                ->label('Jenis')
+                ->options([
+                    'Kambing' => 'Kambing',
+                    'Sapi' => 'Sapi',
+                    'Kerbau' => 'Kerbau',
+                ])
+                ->native(false)
+                ->required(),
+            Forms\Components\Select::make('peternak_id')
+                ->label('Peternak')
+                ->native(false)
+                ->options($peternaks->mapWithKeys(function ($peternak) {
+                    return $peternak->user
+                        ? [
+                            $peternak->user->id => $peternak->user->name,
+                        ] : null;
+                }))
+                ->disabled(function ($get, $state) use ($peternaks) {
+                    return $peternaks->count() === 0;
+                })
+                ->hint(function ($state) use ($peternaks) {
+                    if ($peternaks->count() === 0) {
+                        return 'Buat data Peternak terlebih dahulu';
+                    }
+                    return null;
+                })
+                ->required(),
+        ]);
     }
 
     public static function table(Table $table): Table
@@ -78,11 +77,10 @@ class TernakResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('peternak_id')
                     ->label('Peternak')
-                    ->formatStateUsing(function ($state): string {  
-                        return Peternak::find($state)?->user?->name  
-                               ?? 'Deleted Farmer';  
+                    ->formatStateUsing(function ($state): string {
+                        return Peternak::find($state)?->user?->name ?? 'Deleted Farmer';
                     })
-                    ->searchable(), 
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('no_antri')
                     ->label('Antrian')
                     ->formatStateUsing(function ($record): string {
@@ -93,7 +91,9 @@ class TernakResource extends Resource
                     ->searchable(),
             ])
             ->filters([
-                //
+                Filter::make('belum_disembelih')
+                    ->default()
+                    ->query(fn (Builder $query): Builder => $query->whereNull('karkas')),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -105,33 +105,33 @@ class TernakResource extends Resource
                             ->label('Juleha')
                             ->native(false)
                             ->required()
-                            ->options($juleha->mapWithKeys(
-                                function ($juleha) {
-                                    return $juleha->user ? [
+                            ->options($juleha->mapWithKeys(function ($juleha) {
+                                return $juleha->user
+                                    ? [
                                         $juleha->user->id => $juleha->user->name,
                                     ] : null;
-                                })),
+                            })),
                         Forms\Components\Select::make('penyelia_id')
                             ->label('Penyelia')
                             ->native(false)
                             ->required()
-                            ->options($penyelia->mapWithKeys(
-                                function ($penyelia) {
-                                    return $penyelia->user ? [
+                            ->options($penyelia->mapWithKeys(function ($penyelia) {
+                                return $penyelia->user
+                                    ? [
                                         $penyelia->user->id => $penyelia->user->name,
                                     ] : null;
-                                })),
+                            })),
                         Forms\Components\TextInput::make('karkas')
                             ->label('Berat Karkas (Kg)')
                             ->numeric()
                             ->required(),
-
                         Forms\Components\Select::make('kesehatan')
                             ->label('Kesehatan')
                             ->options([
                                 'Sehat' => 'Sehat',
                                 'Layak' => 'Layak',
-                            ])->required(),
+                            ])
+                            ->required(),
                     ])
                     ->action(function ($record, array $data) {
                         $record->update([
@@ -144,14 +144,13 @@ class TernakResource extends Resource
                     })
                     ->modalHeading('Sembelih Ternak')
                     ->modalSubmitActionLabel('Sembelih')
-                    ->modalWidth('lg') 
+                    ->modalWidth('lg')
                     ->label(function ($record) {
-                        return $record->karkas == null ? "Sembelih" : "Telah Disembelih";
+                        return $record->karkas == null ? 'Sembelih' : 'Telah Disembelih';
                     })
                     ->disabled(function ($record) {
                         return $record->karkas !== null;
                     }),
-
                 Tables\Actions\Action::make('validasi')
                     ->button()
                     ->icon('heroicon-o-check') // Optional icon
@@ -179,7 +178,7 @@ class TernakResource extends Resource
                     ->action(function ($record) {
                         $role = auth()->user()->role;
                         if ($role == 'penyelia') {
-                            $record->update(['validasi_1' => true]); 
+                            $record->update(['validasi_1' => true]);
                         } else if ($role == 'juleha') {
                             $record->update(['validasi_2' => true]);
                         }
@@ -191,7 +190,7 @@ class TernakResource extends Resource
                         } else if ($role == 'juleha') {
                             return $record->validasi_2 ? 'success' : 'primary';
                         }
-                    }) // Button color (e.g., 'primary', 'danger')
+                    }), // Button color (e.g., 'primary', 'danger')
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -219,9 +218,12 @@ class TernakResource extends Resource
     public static function canViewAny(): bool
     {
         return in_array(
-            auth()->user()?->role, [
-                'admin_rph', 'juleha', 'penyelia'
-            ]);
+            auth()->user()?->role,
+            [
+                'admin_rph',
+                'juleha',
+                'penyelia',
+            ],
+        );
     }
-
 }

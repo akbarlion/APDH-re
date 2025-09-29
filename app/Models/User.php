@@ -3,9 +3,9 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -26,7 +26,7 @@ class User extends Authenticatable implements FilamentUser
         'password',
         'phone',
         'alamat',
-        'role'
+        'role',
     ];
 
     /**
@@ -66,24 +66,18 @@ class User extends Authenticatable implements FilamentUser
     {
         return match ($this->role) {
             'juleha' => $this->hasOne(Juleha::class),
-
             'peternak' => $this->hasOne(Peternak::class),
-
             'penyelia' => $this->hasOne(Penyelia::class),
-
             'admin_rph' => $this->hasOne(AdminRph::class),
-
             'super_admin' => $this->hasOne(SuperAdmin::class),
-
             'lapak' => $this->hasOne(Lapak::class),
-
             default => null,
         };
     }
 
     /**
      * Check if user has $role
-     * 
+     *
      * @param string $role
      * @return bool
      */

@@ -9,7 +9,10 @@ use Endroid\QrCode\Writer\PngWriter;
 use Endroid\QrCode\Writer\ValidationException;
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
 use App\Http\Controllers\BcController;
+use App\Models\IoTChain;
+use App\Models\IoT;
 
 Route::get('/', function () {
     return view('index');
@@ -35,4 +38,20 @@ Route::get('/qr/{transaksi_id}', function ($transaksi_id) {
     $result = $writer->write($qrcode);
     return response($result->getString())
         ->header('Content-Type', $result->getMimeType());
+});
+
+Route::get('/insert', function (Request $request) 
+{
+    $node = IoT::firstWhere('node', $request->node);
+    if ($node) {
+        $resp = $request->only('node', 'humi', 'temp');
+        // Cast 'humi' and 'temp' to integers
+        $resp['humi'] = (int) $resp['humi'];
+        $resp['temp'] = (int) $resp['temp'];
+
+        IoTChain::addBlock(json_encode($resp));
+        return IoTChain::getLatestBlock();
+    } else {
+        abort(404); 
+    }
 });

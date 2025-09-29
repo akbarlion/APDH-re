@@ -15,23 +15,20 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class IoTResource extends Resource
 {
-    protected static ?string $model = IoT::class;
+    protected static null|string $model = IoT::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-    protected static ?int $navigationSort = 3;
+    protected static null|string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static null|int $navigationSort = 3;
 
     // Navigation label
-    protected static ?string $navigationLabel = 'IoT';
-
-    // Breadcrumb label
-    protected static ?string $label = 'IoT';
+    protected static null|string $navigationLabel = 'IoT';
+    protected static null|string $breadcrumb = 'IoT';
 
     public static function form(Form $form): Form
     {
-        return $form
-            ->schema([
-                Forms\Components\TextInput::make('node')
-            ]);
+        return $form->schema([
+            Forms\Components\TextInput::make('node'),
+        ]);
     }
 
     public static function table(Table $table): Table
@@ -73,5 +70,4 @@ class IoTResource extends Resource
     {
         return in_array(auth()->user()?->role, ['super_admin', 'admin_rph']);
     }
-
 }

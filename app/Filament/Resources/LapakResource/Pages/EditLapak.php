@@ -10,6 +10,11 @@ class EditLapak extends EditRecord
 {
     protected static string $resource = LapakResource::class;
 
+    protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('index');
+    }
+
     protected function getHeaderActions(): array
     {
         return [

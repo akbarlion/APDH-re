@@ -10,6 +10,11 @@ class EditRph extends EditRecord
 {
     protected static string $resource = RphResource::class;
 
+    protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('index');
+    }
+
     public function getTitle(): string
     {
         return 'Edit RPH';

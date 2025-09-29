@@ -10,6 +10,11 @@ class ListLapaks extends ListRecords
 {
     protected static string $resource = LapakResource::class;
 
+    public function getTitle(): string
+    {
+        return 'Lapak';
+    }
+
     protected function getHeaderActions(): array
     {
         return [

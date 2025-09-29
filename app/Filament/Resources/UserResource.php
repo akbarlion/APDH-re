@@ -8,23 +8,21 @@
 
 namespace App\Filament\Resources;
 
-use Filament\Facades\Filament;
 use App\Filament\Resources\UserResource\Pages;
 use App\Filament\Resources\UserResource\RelationManagers;
-use App\Models\User;
-use App\Models\Rph;
 use App\Models\Pasar;
-
+use App\Models\Rph;
+use App\Models\User;
+use Filament\Facades\Filament;
 use Filament\Forms;
-use Filament\Forms\Components\Fieldset;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\Fieldset;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Hidden;
-
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -34,12 +32,13 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class UserResource extends Resource
 {
-    protected static ?string $model = User::class;
+    protected static null|string $model = User::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-users';
-    protected static ?int $navigationSort = 2;
+    protected static null|string $navigationIcon = 'heroicon-o-users';
+    protected static null|int $navigationSort = 2;
 
-    private static function rph_selector($columns) {
+    private static function rph_selector($columns)
+    {
         $rph_sel = Select::make('rph_id')
             ->label('RPH')
             ->native(false)
@@ -60,148 +59,121 @@ class UserResource extends Resource
                 return null;
             });
 
-        if ($columns) { $rph_sel = $rph_sel->columnSpan(['xl' => $columns]); }
+        if ($columns) {
+            $rph_sel = $rph_sel->columnSpan(['xl' => $columns]);
+        }
         return $rph_sel;
     }
 
     public static function form(Form $form): Form
     {
+        return $form->schema([
+            Section::make()
+                ->columns(['xl' => 6])
+                ->schema([
+                    TextInput::make('name')
+                        ->columnSpan(['xl' => 3])
+                        ->label('Nama Lengkap')
+                        ->required(),
+                    TextInput::make('email')
+                        ->columnSpan(['xl' => 3])
+                        ->email()
+                        ->required(),
+                    TextInput::make('password')
+                        ->columnSpan(['xl' => 3])
+                        ->password()
+                        ->confirmed()
+                        ->required(),
+                    TextInput::make('password_confirmation')
+                        ->columnSpan(['xl' => 3])
+                        ->password()
+                        ->required()
+                        ->maxLength(255)
+                        ->same('password')
+                        ->dehydrated(false)
+                        ->label('Confirm Password'),
+                    TextInput::make('phone')->columnSpan(['xl' => 3])->label('No Telp'),
+                    Textarea::make('alamat')->columnSpan(['xl' => 3]),
+                    Select::make('role')
+                        ->columnSpan(['xl' => 3])
+                        ->options(function () {
+                            $user = auth()->user();
 
-        return $form
-            ->schema([
-                Section::make()
-                    ->columns(['xl' => 6])
-                    ->schema([
-                        TextInput::make('name')
-                            ->columnSpan(['xl' => 3])
-                            ->label('Nama Lengkap')
-                            ->required(),
-                        TextInput::make('email')
-                            ->columnSpan(['xl' => 3])
-                            ->email()
-                            ->required(),
-                        TextInput::make('password')
-                            ->columnSpan(['xl' => 3])
-                            ->password()
-                            ->confirmed()
-                            ->required(),
-                         TextInput::make('password_confirmation')
-                             ->columnSpan(['xl' => 3])
-                             ->password()
-                             ->required()
-                             ->maxLength(255)
-                             ->same('password')
-                             ->dehydrated(false)
-                             ->label('Confirm Password'),
-                         TextInput::make('phone')
-                             ->columnSpan(['xl' => 3])
-                             ->label('No Telp'),
-                         Textarea::make('alamat')
-                             ->columnSpan(['xl' => 3]),
-                         Select::make('role')
-                             ->columnSpan(['xl' => 3])
-                             ->options(function () {
-                                 $user = auth()->user();
+                            if ($user->hasRole('super_admin')) {
+                                return [
+                                    'super_admin' => 'Super Admin',
+                                    'admin_rph' => 'Admin RPH',
+                                ];
+                            }
 
-                                 if ($user->hasRole('super_admin')) {
-                                     return [
-                                         'super_admin' => 'Super Admin',
-                                         'admin_rph' => 'Admin RPH',
-                                     ]; 
-                                 }
+                            if ($user->hasRole('admin_rph')) {
+                                return [
+                                    'admin_rph' => 'Admin RPH',
+                                    'penyelia' => 'Penyelia',
+                                    'peternak' => 'Peternak',
+                                ];
+                            }
 
-                                 if ($user->hasRole('admin_rph')) {
-                                     return [
-                                         'admin_rph' => 'Admin RPH',
-                                         'penyelia' => 'Penyelia',
-                                         'peternak' => 'Peternak',
-                                     ];
-                                 }
-
-                                 return [];
-                             })
-                             ->native(false)
-                             ->required()
-                             ->live(),
-                    ]),
-
-                    Fieldset::make('Role')
-                        ->schema([])
-                        ->visible(fn (
-                            Forms\Get $get
-                        ) => $get('role') == ''),
-
-                    Fieldset::make('Super Admin')
-                        ->relationship('profile')
-                        ->schema([
-                            Textarea::make('notes')
-                            ->label('Catatan')
-                        ])
-                        ->visible(fn (
-                            Forms\Get $get
-                        ) => $get('role') == 'super_admin'),
-
-                    Fieldset::make('Admin RPH')
-                        ->relationship('profile')
-                        ->schema([
-                            Select::make('rph_id')
-                                ->label('RPH')
-                                ->native(false)
-                                ->options(Rph::all()->pluck('name', 'id'))
-                                ->default(function ($record) {
-                                    if ($record && $record->profile && $record->profile->rph_id) {
-                                        return $record->profile->rph_id;
-                                    }
-                                    return null; // No default if no linked RPH
-                                })
-                                ->disabled(function ($get, $state) {
-                                    return RPH::count() === 0;
-                                })
-                                ->hint(function ($state) {
-                                    if (RPH::count() === 0) {
-                                        return 'Please add an RPH first.';
-                                    }
-                                    return null;
-                                })
-                        ])
-                        ->visible(fn (
-                            Forms\Get $get
-                        ) => $get('role') == 'admin_rph'),
-
-                    Fieldset::make('Penyelia')
-                        ->columns(['xl' => 2])
-                        ->relationship('profile')
-                        ->schema([
-                         TextInput::make('nip')
-                             ->columnSpan(['xl' => 1])
-                             ->label('Nomor Induk Penyelia'),
-                         TextInput::make('status')
-                             ->columnSpan(['xl' => 1]),
-                         DatePicker::make('tgl_berlaku')
-                             ->columnSpan(['xl' => 1])
-                             ->native(false)
-                             ->label('Tanggal Berlaku'),
-                         FileUpload::make('file_sk')
-                             ->columnSpan(['xl' => 1])
-                             ->label('Upload SK'),
-                        ])
-                        ->visible(fn (
-                            Forms\Get $get
-                        ) => $get('role') === 'penyelia'),
-            ]);
+                            return [];
+                        })
+                        ->native(false)
+                        ->required()
+                        ->live(),
+                ]),
+            Fieldset::make('Role')->schema([])->visible(fn(Forms\Get $get) => $get('role') == ''),
+            Fieldset::make('Super Admin')
+                ->relationship('profile')
+                ->schema([
+                    Textarea::make('notes')->label('Catatan'),
+                ])
+                ->visible(fn(Forms\Get $get) => $get('role') == 'super_admin'),
+            Fieldset::make('Admin RPH')
+                ->relationship('profile')
+                ->schema([
+                    Select::make('rph_id')
+                        ->label('RPH')
+                        ->native(false)
+                        ->options(Rph::all()->pluck('name', 'id'))
+                        ->default(function ($record) {
+                            if ($record && $record->profile && $record->profile->rph_id) {
+                                return $record->profile->rph_id;
+                            }
+                            return null; // No default if no linked RPH
+                        })
+                        ->disabled(function ($get, $state) {
+                            return RPH::count() === 0;
+                        })
+                        ->hint(function ($state) {
+                            if (RPH::count() === 0) {
+                                return 'Please add an RPH first.';
+                            }
+                            return null;
+                        }),
+                ])
+                ->visible(fn(Forms\Get $get) => $get('role') == 'admin_rph'),
+            Fieldset::make('Penyelia')
+                ->columns(['xl' => 2])
+                ->relationship('profile')
+                ->schema([
+                    TextInput::make('nip')->columnSpan(['xl' => 1])->label('Nomor Induk Penyelia'),
+                    TextInput::make('status')->columnSpan(['xl' => 1]),
+                    DatePicker::make('tgl_berlaku')
+                        ->columnSpan(['xl' => 1])
+                        ->native(false)
+                        ->label('Tanggal Berlaku'),
+                    FileUpload::make('file_sk')->columnSpan(['xl' => 1])->label('Upload SK'),
+                ])
+                ->visible(fn(Forms\Get $get) => $get('role') === 'penyelia'),
+        ]);
     }
 
     public static function table(Table $table): Table
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('email')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('role')
-                    ->searchable()
-                    ->sortable(),
+                Tables\Columns\TextColumn::make('name')->searchable(),
+                Tables\Columns\TextColumn::make('email')->searchable(),
+                Tables\Columns\TextColumn::make('role')->searchable()->sortable(),
             ])
             ->filters([
                 //
@@ -238,26 +210,19 @@ class UserResource extends Resource
     public static function getEloquentQuery(): Builder
     {
         $user = auth()->user();
-        return parent::getEloquentQuery()
-            ->when($user->hasRole('super_admin'), function ($query) {
-                return $query->whereIn('role', ['super_admin', 'admin_rph']);
-            })
-            ->when($user->hasRole('admin_rph'), function ($query) use ($user) {
-                $rph_id = $user->profile?->rph_id;
+        return parent::getEloquentQuery()->when($user->hasRole('super_admin'), function ($query) {
+            return $query->whereIn('role', ['super_admin', 'admin_rph']);
+        })->when($user->hasRole('admin_rph'), function ($query) use ($user) {
+            $rph_id = $user->profile?->rph_id;
 
-                // Return the same query but use subquery instead of where
-                return $query->where(function ($query) use ($rph_id) {
-                  $query->whereIn('id', function ($subquery) use ($rph_id) {
-                      $subquery->select('user_id')
-                          ->from('admin_rph') 
-                          ->where('rph_id', $rph_id);
-                  })->orWhereIn('id', function ($subquery) use ($rph_id) {
-                      $subquery->select('user_id')
-                          ->from('penyelia')
-                          ->where('rph_id', $rph_id);
-                  });
+            // Return the same query but use subquery instead of where
+            return $query->where(function ($query) use ($rph_id) {
+                $query->whereIn('id', function ($subquery) use ($rph_id) {
+                    $subquery->select('user_id')->from('admin_rph')->where('rph_id', $rph_id);
+                })->orWhereIn('id', function ($subquery) use ($rph_id) {
+                    $subquery->select('user_id')->from('penyelia')->where('rph_id', $rph_id);
                 });
-            })
-            ;
+            });
+        });
     }
 }

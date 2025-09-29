@@ -20,33 +20,26 @@ class Rph extends Model
         'phone',
         'status_sertifikasi',
         'file_sertifikasi',
-        'penyelia_id'
+        'penyelia_id',
     ];
 
     /**
      * Relationships
-     * 
+     *
      * @return BelongsTo
      */
-    public function penyelia() : BelongsTo
+    public function penyelia(): BelongsTo
     {
         return $this->belongsTo(Penyelia::class);
     }
 
     /**
-     * Relationships    
+     * Relationships
      *
      * @return BelongsToMany
      */
-    public function julehas() : BelongsToMany
+    public function julehas(): BelongsToMany
     {
-        return $this->belongsToMany(
-            Juleha ::class,
-            'juleha_rph',
-            'rph_id',
-            'juleha_id',
-            'user_id',
-            'id'
-        );
+        return $this->belongsToMany(Juleha::class, 'juleha_rph', 'rph_id', 'juleha_id', 'user_id', 'id');
     }
 }
