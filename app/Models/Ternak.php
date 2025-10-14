@@ -71,7 +71,7 @@ class Ternak extends Model
                 if (isset($ternak->karkas)) {
                     $ternak->sisa_karkas = $ternak->karkas;
                 }
-            } 
+            }
         });
     }
 

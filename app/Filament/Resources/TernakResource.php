@@ -2,8 +2,6 @@
 
 namespace App\Filament\Resources;
 
-use Filament\Tables\Filters\Filter;
-
 use App\Filament\Resources\TernakResource\Pages;
 use App\Filament\Resources\TernakResource\RelationManagers;
 use App\Models\Juleha;
@@ -16,6 +14,7 @@ use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -51,10 +50,11 @@ class TernakResource extends Resource
                 ->label('Peternak')
                 ->native(false)
                 ->options($peternaks->mapWithKeys(function ($peternak) {
-                    return $peternak->user
-                        ? [
+                    if ($peternak->user) {
+                        return [
                             $peternak->user->id => $peternak->user->name,
-                        ] : null;
+                        ];
+                    }
                 }))
                 ->disabled(function ($get, $state) use ($peternaks) {
                     return $peternaks->count() === 0;
@@ -93,7 +93,7 @@ class TernakResource extends Resource
             ->filters([
                 Filter::make('belum_disembelih')
                     ->default()
-                    ->query(fn (Builder $query): Builder => $query->whereNull('karkas')),
+                    ->query(fn(Builder $query): Builder => $query->whereNull('karkas')),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

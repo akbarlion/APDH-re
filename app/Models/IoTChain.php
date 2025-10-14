@@ -29,7 +29,7 @@ class Iotchain extends Model
                 'timestamp' => now(),
                 'previous_hash' => '0',
                 'current_hash' => hash('sha256', now() . '0' . $genesis),
-                'transaction' => json_decode($genesis); 
+                'transaction' => json_decode($genesis) 
             ]);
         }
 

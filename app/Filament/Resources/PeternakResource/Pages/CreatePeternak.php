@@ -9,6 +9,11 @@ use Filament\Resources\Pages\CreateRecord;
 
 class CreatePeternak extends CreateRecord
 {
+    public function getTitle(): string
+    {
+        return 'Tambah IoT';
+    }
+
     protected static string $resource = PeternakResource::class;
 
     protected function getRedirectUrl(): string

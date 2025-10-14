@@ -67,7 +67,7 @@ class TransaksiResource extends Resource
                 ->label('Ternak'),
             TextInput::make('jumlah')
                 ->numeric()
-                ->maxValue(fn (Get $get) => Ternak::find($get('ternak_id'))->sisa_karkas ?? 0)
+                ->maxValue(fn(Get $get) => Ternak::find($get('ternak_id'))->sisa_karkas ?? 0)
                 ->required()
                 ->label('Jumlah'),
             DateTimePicker::make('waktu_kirim')
@@ -97,8 +97,7 @@ class TransaksiResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
-            ])
-            ->defaultSort('id', 'desc');
+            ])->defaultSort('id', 'desc');
     }
 
     public static function getRelations(): array
