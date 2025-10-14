@@ -23,11 +23,12 @@ class Blockchain extends Model
     {
         // Step 1: Ensure genesis block exists
         if (self::count() == 0) {
+            $genesis = '{"0":"Genesis Block"}';
             self::create([
                 'timestamp' => now(),
                 'previous_hash' => '0',
-                'current_hash' => hash('sha256', now() . '0' . 'Genesis Block'),
-                'transaction' => '{"0":"Genesis Block"}',
+                'current_hash' => hash('sha256', now() . '0' . $genesis),
+                'transaction' => json_decode($genesis); 
             ]);
         }
 

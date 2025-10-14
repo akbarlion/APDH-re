@@ -44,12 +44,13 @@ Route::get('/insert', function (Request $request)
 {
     $node = IoT::firstWhere('node', $request->node);
     if ($node) {
-        $resp = $request->only('node', 'humi', 'temp');
+        $req = $request->only('node', 'humi', 'temp');
         // Cast 'humi' and 'temp' to integers
-        $resp['humi'] = (int) $resp['humi'];
-        $resp['temp'] = (int) $resp['temp'];
+        $req['humi'] = (int) $req['humi'];
+        $req['temp'] = (int) $req['temp'];
+        $stamp = $request->input('stamp');
 
-        IoTChain::addBlock(json_encode($resp));
+        IoTChain::addBlock(json_encode($req), $stamp);
         return IoTChain::getLatestBlock();
     } else {
         abort(404); 
