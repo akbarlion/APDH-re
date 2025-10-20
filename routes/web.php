@@ -45,7 +45,7 @@ Route::get('/qr/{transaksi_id}', function ($transaksi_id) {
 
 Route::get('/end/{transaksi_id}', function ($transaksi_id) {
     $transaksi = Transaksi::find($transaksi_id);
-    $temp_humi_json = EndTransactionService::handle($transaksi->iot->node, $transaksi->waktu_kirim);
+    $temp_humi_json = EndTransactionService->handle($transaksi->iot->node, $transaksi->waktu_kirim);
 });
 
 Route::get('/insert', function (Request $request) 
