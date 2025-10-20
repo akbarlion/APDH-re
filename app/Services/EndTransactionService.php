@@ -16,9 +16,7 @@ class EndTransactionService
             ->whereBetween('timestamp', [$from, now()->format('Y-m-d H:i:s')])
             ->get(['transaction']);
 
-        $res = collect($transactions)->flatMap(fn($sublist) => collect($sublist)->map(
-            fn($item) => json_decode($item, true),
-        ));
+        $res = collect($transactions)->flatMap(fn($sublist) => collect($sublist));
 
         $humi_list = $res->pluck('humi')->all();
         $temp_list = $res->pluck('temp')->all();
