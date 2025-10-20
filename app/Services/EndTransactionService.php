@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use app\Models\IoTChain;
+use App\Models\IoTChain;
 
 class EndTransactionService
 {
