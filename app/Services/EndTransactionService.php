@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use app\Models\IoTChain;
+
 class EndTransactionService
 {
     /**
