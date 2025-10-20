@@ -13,6 +13,9 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\BcController;
 use App\Models\IoTChain;
 use App\Models\IoT;
+use App\Models\Transaksi;
+
+use App\Services\EndTransactionService;
 
 Route::get('/', function () {
     return view('index');
@@ -39,6 +42,11 @@ Route::get('/qr/{transaksi_id}', function ($transaksi_id) {
     return response($result->getString())
         ->header('Content-Type', $result->getMimeType());
 });
+
+Route::get('/end/{transaksi_id}', function ($transaksi_id) {
+    $transaksi = Transaksi::find($transaksi_id);
+    $temp_humi_json = EndTransactionService::handle($transaksi->iot->node, $transaksi->waktu_kirim);
+})
 
 Route::get('/insert', function (Request $request) 
 {

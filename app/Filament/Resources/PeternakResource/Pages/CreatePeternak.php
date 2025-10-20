@@ -11,7 +11,7 @@ class CreatePeternak extends CreateRecord
 {
     public function getTitle(): string
     {
-        return 'Tambah IoT';
+        return 'Tambah Peternak';
     }
 
     protected static string $resource = PeternakResource::class;
