@@ -13,7 +13,7 @@ class EndTransactionService
     {
         $transactions = IoTChain::query()
             ->where('transaction->node', '=', $node_id)
-            ->whereBetween('timestamp', [$from, $to])
+            ->whereBetween('timestamp', [$from, now()->format('Y-m-d H:i:s');])
             ->get(['transaction']);
 
         dd($transactions);
