@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\IoTChain;
+use App\Services\CSAService;
 
 class EndTransactionService
 {
@@ -11,15 +12,24 @@ class EndTransactionService
      */
     public static function handle($node_id, $from)
     {
-        $transactions = IoTChain::select('transaction')
-            ->where('transaction->node', '=', $node_id)
+        $transactions = IoTChain::where('transaction->node', '=', $node_id)
             ->whereBetween('timestamp', [$from, now()->format('Y-m-d H:i:s')])
-            ->get();
+            ->pluck('transaction');
 
-        $res = collect($transactions)->flatMap(fn($sublist) => collect($sublist));
+        $humi_list = $transactions->pluck('humi')->all();
+        $temp_list = $transactions->pluck('temp')->all();
 
-        $humi_list = $res->pluck('humi')->all();
-        $temp_list = $res->pluck('temp')->all();
-        dd($transactions);
+        $csa = new CSAService();
+
+        return json_decode(json_encode([
+            'humi' => [
+                'max' => $csa->run($humi_list, mode: 'max'),
+                'min' => $csa->run($humi_list, mode: 'min'),
+            ],
+            'temp' => [
+                'max' => $csa->run($temp_list, mode: 'max'),
+                'min' => $csa->run($temp_list, mode: 'min'),
+            ],
+        ]));
     }
 }

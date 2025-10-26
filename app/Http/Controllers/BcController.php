@@ -6,7 +6,7 @@ use App\Models\Blockchain;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-class BcController extends Controller
+final class BcController extends Controller
 {
     /**
      * Display a listing of the resource.

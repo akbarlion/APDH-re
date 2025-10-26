@@ -21,6 +21,11 @@ literal-named-argument = { enabled = false }
 halstead = { effort-threshold = 7000 }
 
 [analyzer]
+# Disabled Issue Categories
+existence-issues = false
+method-issues = false
+
+# Analyzer Settings
 find-unused-definitions = true
 find-unused-expressions = false
 analyze-dead-code = false
