@@ -24,7 +24,10 @@ class CreateUser extends CreateRecord
     {
         if ($this->record->role == 'penyelia') {
             $this->record->profile->update([
-                'rph_id' => Filament::auth()->user()->profile?->rph_id,
+                'rph_id' => Filament::auth()
+                    ->user()
+                    ->profile
+                    ?->rph_id,
             ]);
         }
     }

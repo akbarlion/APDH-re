@@ -31,7 +31,12 @@ class TernakResource extends Resource
     {
         $peternaks = Peternak::with('user')->get();
         return $form->schema([
-            Forms\Components\Hidden::make('rph_id')->default(fn() => Filament::auth()->user()->profile?->rph_id),
+            Forms\Components\Hidden::make('rph_id')->default(
+                fn() => Filament::auth()
+                    ->user()
+                    ->profile
+                    ?->rph_id,
+            ),
             /*
              * Forms\Components\TextInput::make('bobot')
              * ->label('Bobot')

@@ -21,6 +21,11 @@ class CreateJuleha extends CreateRecord
         $this->record
             ->profile
             ?->rphs()
-            ->attach(Filament::auth()->user()->profile?->rph_id);
+            ->attach(
+                Filament::auth()
+                    ->user()
+                    ->profile
+                    ?->rph_id,
+            );
     }
 }

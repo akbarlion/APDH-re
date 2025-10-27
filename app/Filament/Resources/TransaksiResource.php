@@ -32,7 +32,10 @@ class TransaksiResource extends Resource
 
     public static function form(Form $form): Form
     {
-        $rphId = Filament::auth()->user()->profile?->rph_id;
+        $rphId = Filament::auth()
+            ->user()
+            ->profile
+            ?->rph_id;
         $lapak = Lapak::with('user')->get();
         return $form->schema([
             Forms\Components\Hidden::make('rph_id')->default($rphId),
@@ -97,7 +100,8 @@ class TransaksiResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
-            ])->defaultSort('id', 'desc');
+            ])
+            ->defaultSort('id', 'desc');
     }
 
     public static function getRelations(): array
