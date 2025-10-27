@@ -62,10 +62,9 @@ class Transaksi extends Model
         });
 
         static::saved(function ($transaksi) {
-            $transdata = new TransactionData($transaksi);
             $ternak = Ternak::find($transaksi->ternak_id);
             $ternak->decrement('sisa_karkas', $transaksi->jumlah);
-            Blockchain::addBlock($transdata->json());
+            Blockchain::addBlock(TransactionData::builder($transaksi));
         });
     }
 }
