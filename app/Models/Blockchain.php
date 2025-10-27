@@ -22,7 +22,7 @@ class Blockchain extends Model
     public static function addBlock(string $transData): self
     {
         // Step 1: Ensure genesis block exists
-        if (self::count() == 0) {
+        if (self::count() === 0) {
             $genesis = '{"0":"Genesis Block"}';
             self::create([
                 'timestamp' => now(),
