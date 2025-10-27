@@ -24,3 +24,4 @@ yarn-error.log
 tags
 .venv
 _ide_helper.php
+_ide_helper_models.php
