@@ -28,7 +28,7 @@ class Blockchain extends Model
                 'timestamp' => now(),
                 'previous_hash' => '0',
                 'current_hash' => hash('sha256', now() . '0' . $genesis),
-                'transaction' => json_decode($genesis) 
+                'transaction' => json_decode($genesis),
             ]);
         }
 
@@ -45,5 +45,10 @@ class Blockchain extends Model
             'current_hash' => hash('sha256', $timestamp . $prevHash . $transData),
             'transaction' => json_decode($transData),
         ]);
+    }
+
+    public static function findBlock($id)
+    {
+        return self::where('transaction->id_transaksi', '=', $id)->latest()->first();
     }
 }

@@ -2,6 +2,7 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\BcController;
+use App\Models\Blockchain;
 use App\Models\IoT;
 use App\Models\IoTChain;
 use App\Models\Transaksi;
@@ -41,7 +42,11 @@ Route::get('/qr/{transaksi_id}', function ($transaksi_id) {
 
 Route::get('/end/{transaksi_id}', function ($transaksi_id) {
     $transaksi = Transaksi::find($transaksi_id);
+    if (!$transaksi) {
+        abort(404);
+    }
     $temp_humi_csa = EndTransactionService::handle($transaksi->iot->node, $transaksi->waktu_kirim);
+    $transaksi_json = json_decode(Blockchain::findBlock($transaksi_id)->transactions);
 });
 
 Route::get('/insert', function (Request $request) {

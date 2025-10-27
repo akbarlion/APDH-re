@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Iotchain extends Model
+class IotChain extends Model
 {
     protected $table = 'iotchain';
     public $timestamps = false;
