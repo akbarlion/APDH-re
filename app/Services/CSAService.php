@@ -93,7 +93,8 @@ class CSAService
         // Nilai asli (bukan yang dinegasikan)
         $bestValue = (float) $values[$globalBest];
 
-        return ['bestIndex' => $globalBest, 'bestValue' => $bestValue];
+        // return ['bestIndex' => $globalBest, 'bestValue' => $bestValue];
+        return $bestValue;
     }
 
     /* ------------------- Utilitas internal ------------------- */
