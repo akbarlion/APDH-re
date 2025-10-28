@@ -46,7 +46,7 @@ Route::get('/end/{transaksi_id}', function ($transaksi_id) {
         abort(404);
     }
     $temp_humi_csa = EndTransactionService::handle($transaksi->iot->node, $transaksi->waktu_kirim);
-    $transaksi_json = json_decode(Blockchain::findBlock($transaksi_id)->transactions);
+    $new_block = Blockchain::findBlock($transaksi_id)->transactions;
 });
 
 Route::get('/insert', function (Request $request) {
