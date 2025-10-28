@@ -16,6 +16,14 @@ class EndTransactionService
             ->whereBetween('timestamp', [$from, now()->format('Y-m-d H:i:s')])
             ->pluck('transaction');
 
+        /**
+         * In case someone forgot to turn on the sensor, the app should still run
+         * okay. Just the csa won't run, temp and humi will be null
+         */
+        if ($transactions->isEmpty()) {
+            return null;
+        }
+
         $humi_list = $transactions->pluck('humi')->all();
         $temp_list = $transactions->pluck('temp')->all();
 
