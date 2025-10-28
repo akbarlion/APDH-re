@@ -10,16 +10,8 @@ class TransactionData
 {
     public static function builder($transaksi)
     {
-        // We need the next 3 lines since we'll handle casted data from model
-        // that returned as array, and object from Filament Form.
-        // My skill issue I guess.
-        if (is_array($transaksi)) {
-            $data = json_decode(json_encode($transaksi));
-        }
-
         $ternak = Ternak::find($transaksi->ternak_id);
 
-        // Only to be returned as array again. La vida es un carrusele I guess.
         $data = [
             'id_transaksi' => $transaksi->id,
             'id_csa' => null,
@@ -30,12 +22,12 @@ class TransactionData
             'jumlah' => $transaksi->jumlah,
             'waktu_sembelih' => $ternak?->waktu_sembelih,
             'waktu_kirim' => $transaksi->waktu_kirim,
-            'waktu_selesai_kirim' => $transaksi->waktu_selesai_kirim ?? null,
-            'suhu_min' => $transaksi->suhu_min ?? null,
-            'suhu_max' => $transaksi->suhu_max ?? null,
-            'kelembapan_min' => $transaksi->kelembapan_min ?? null,
-            'kelembapan_max' => $transaksi->kelembapan_max ?? null,
-            'status_validasi' => $transaksi->status_validasi ?? 'Dalam proses',
+            'waktu_selesai_kirim' => null,
+            'suhu_min' => null,
+            'suhu_max' => null,
+            'kelembapan_min' => null,
+            'kelembapan_max' => null,
+            'status_validasi' => 'Dalam proses',
             'waktu_upload' => now()->format('Y-m-d H:i:s'),
         ];
 

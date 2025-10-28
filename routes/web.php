@@ -52,7 +52,7 @@ Route::get('/end/{transaksi_id}', function ($transaksi_id) {
     $new_block['suhu_max'] = $temp_humi_csa?->temp->max;
     $new_block['kelembapan_min'] = $temp_humi_csa?->humi->min;
     $new_block['kelembapan_max'] = $temp_humi_csa?->humi->max;
-    Blockchain::addBlock(TransactionData::builder($new_block));
+    Blockchain::addBlock(json_encode($new_block));
 });
 
 Route::get('/insert', function (Request $request) {
