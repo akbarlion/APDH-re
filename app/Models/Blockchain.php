@@ -49,6 +49,7 @@ class Blockchain extends Model
 
     public static function findBlock($id)
     {
-        return self::where('transaction->id_transaksi', '=', $id)->latest()->first();
+        return self::whereRaw('json_extract("transaction", "$.id_transaksi")
+            = CAST(? AS INTEGER)', [$id])->first();
     }
 }

@@ -46,7 +46,7 @@ Route::get('/end/{transaksi_id}', function ($transaksi_id) {
         abort(404);
     }
     $temp_humi_csa = EndTransactionService::handle($transaksi->iot->node, $transaksi->waktu_kirim);
-    $new_block = Blockchain::findBlock($transaksi_id)->transactions;
+    $new_block = Blockchain::findBlock($transaksi_id)->transaction;
     $new_block['waktu_selesai_kirim'] = now()->format('Y-m-d H:i:s');
     $new_block['suhu_min'] = $temp_humi_csa?->temp->min;
     $new_block['suhu_max'] = $temp_humi_csa?->temp->max;
