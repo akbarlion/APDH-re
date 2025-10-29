@@ -46,7 +46,9 @@ class PasarResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->emptyStateHeading('No Pasar Found')
+            ->emptyStateDescription('Once you add a Pasar, it will appear here.');
     }
 
     public static function getRelations(): array

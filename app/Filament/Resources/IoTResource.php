@@ -35,7 +35,24 @@ class IoTResource extends Resource
     {
         return $table
             ->columns([
-                //
+                // OLD CODE - empty columns causing empty rows
+                // //
+                // NEW CODE - add proper columns to display IoT data
+                // Tables\Columns\TextColumn::make('id')
+                //     ->label('ID')
+                //     ->sortable(),
+                Tables\Columns\TextColumn::make('node')
+                    ->label('Node')
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('created_at')
+                    ->label('Created At')
+                    ->dateTime()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('updated_at')
+                    ->label('Updated At')
+                    ->dateTime()
+                    ->sortable(),
             ])
             ->filters([
                 //

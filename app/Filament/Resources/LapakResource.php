@@ -80,7 +80,9 @@ class LapakResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->emptyStateHeading('No Lapak Found')
+            ->emptyStateDescription('Once you add a Lapak, it will appear here.');
     }
 
     public static function getRelations(): array

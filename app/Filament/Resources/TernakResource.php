@@ -35,7 +35,7 @@ class TernakResource extends Resource
                 fn() => Filament::auth()
                     ->user()
                     ->profile
-                    ?->rph_id,
+                        ?->rph_id,
             ),
             /*
              * Forms\Components\TextInput::make('bobot')
@@ -54,12 +54,19 @@ class TernakResource extends Resource
             Forms\Components\Select::make('peternak_id')
                 ->label('Peternak')
                 ->native(false)
-                ->options($peternaks->mapWithKeys(function ($peternak) {
-                    if ($peternak->user) {
-                        return [
-                            $peternak->user->id => $peternak->user->name,
-                        ];
-                    }
+                // OLD CODE - causes foreach error when null is returned
+                // ->options($peternaks->mapWithKeys(function ($peternak) {
+                //     if ($peternak->user) {
+                //         return [
+                //             $peternak->user->id => $peternak->user->name,
+                //         ];
+                //     }
+                // }))
+                // NEW CODE - filter null values first to prevent foreach error
+                ->options($peternaks->filter(function ($peternak) {
+                    return $peternak->user !== null;
+                })->mapWithKeys(function ($peternak) {
+                    return [$peternak->user->id => $peternak->user->name];
                 }))
                 ->disabled(function ($get, $state) use ($peternaks) {
                     return $peternaks->count() === 0;
@@ -110,21 +117,35 @@ class TernakResource extends Resource
                             ->label('Juleha')
                             ->native(false)
                             ->required()
-                            ->options($juleha->mapWithKeys(function ($juleha) {
-                                return $juleha->user
-                                    ? [
-                                        $juleha->user->id => $juleha->user->name,
-                                    ] : null;
+                            // OLD CODE - causes foreach error when null is returned
+                            // ->options($juleha->mapWithKeys(function ($juleha) {
+                            //     return $juleha->user
+                            //         ? [
+                            //             $juleha->user->id => $juleha->user->name,
+                            //         ] : null;
+                            // }))
+                            // NEW CODE - filter null values first to prevent foreach error
+                            ->options($juleha->filter(function ($juleha) {
+                                return $juleha->user !== null;
+                            })->mapWithKeys(function ($juleha) {
+                                return [$juleha->user->id => $juleha->user->name];
                             })),
                         Forms\Components\Select::make('penyelia_id')
                             ->label('Penyelia')
                             ->native(false)
                             ->required()
-                            ->options($penyelia->mapWithKeys(function ($penyelia) {
-                                return $penyelia->user
-                                    ? [
-                                        $penyelia->user->id => $penyelia->user->name,
-                                    ] : null;
+                            // OLD CODE - causes foreach error when null is returned
+                            // ->options($penyelia->mapWithKeys(function ($penyelia) {
+                            //     return $penyelia->user
+                            //         ? [
+                            //             $penyelia->user->id => $penyelia->user->name,
+                            //         ] : null;
+                            // }))
+                            // NEW CODE - filter null values first to prevent foreach error
+                            ->options($penyelia->filter(function ($penyelia) {
+                                return $penyelia->user !== null;
+                            })->mapWithKeys(function ($penyelia) {
+                                return [$penyelia->user->id => $penyelia->user->name];
                             })),
                         Forms\Components\TextInput::make('karkas')
                             ->label('Berat Karkas (Kg)')
@@ -201,7 +222,9 @@ class TernakResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->emptyStateHeading('No Ternak Found')
+            ->emptyStateDescription('Once you add a Ternak, it will appear here.');
     }
 
     public static function getRelations(): array

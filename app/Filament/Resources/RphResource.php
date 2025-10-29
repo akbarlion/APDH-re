@@ -45,8 +45,30 @@ class RphResource extends Resource
                 ->maxSize(1024), // 1MB max file size. Adjust as needed.
             Forms\Components\Select::make('penyelia_id')
                 ->native(false)
+                // OLD CODE - shows all penyelia from all RPH (inconsistent with UserResource)
+                // ->options(function () {
+                //     $options = User::where('role', 'penyelia') // 👈 filter by role here
+                //         ->get()
+                //         ->mapWithKeys(fn($user) => [$user->id => $user->name])
+                //         ->toArray();
+                //     return $options;
+                // })
+                // NEW CODE - filter penyelia based on current user's RPH using direct table query
                 ->options(function () {
-                    $options = User::where('role', 'penyelia') // 👈 filter by role here
+                    $currentUser = auth()->user();
+                    $rphId = $currentUser->profile?->rph_id;
+
+                    if (!$rphId) {
+                        return [];
+                    }
+
+                    // Get penyelia from the same RPH using direct table join
+                    $options = User::where('role', 'penyelia')
+                        ->whereIn('id', function ($query) use ($rphId) {
+                        $query->select('user_id')
+                            ->from('penyelia')
+                            ->where('rph_id', $rphId);
+                    })
                         ->get()
                         ->mapWithKeys(fn($user) => [$user->id => $user->name])
                         ->toArray();
@@ -59,11 +81,43 @@ class RphResource extends Resource
                     return null; // No default if no linked RPH
                 })
                 ->disabled(function ($get, $state) {
-                    return Penyelia::count() === 0;
+                    $currentUser = auth()->user();
+                    $rphId = $currentUser->profile?->rph_id;
+
+                    if (!$rphId) {
+                        return true;
+                    }
+
+                    // Count penyelia using direct table query
+                    $penyeliaCount = User::where('role', 'penyelia')
+                        ->whereIn('id', function ($query) use ($rphId) {
+                        $query->select('user_id')
+                            ->from('penyelia')
+                            ->where('rph_id', $rphId);
+                    })
+                        ->count();
+
+                    return $penyeliaCount === 0;
                 })
                 ->hint(function ($state) {
-                    if (Penyelia::count() === 0) {
-                        return 'Please add Penyelia first.';
+                    $currentUser = auth()->user();
+                    $rphId = $currentUser->profile?->rph_id;
+
+                    if (!$rphId) {
+                        return 'User tidak memiliki RPH yang terkait.';
+                    }
+
+                    // Count penyelia using direct table query
+                    $penyeliaCount = User::where('role', 'penyelia')
+                        ->whereIn('id', function ($query) use ($rphId) {
+                        $query->select('user_id')
+                            ->from('penyelia')
+                            ->where('rph_id', $rphId);
+                    })
+                        ->count();
+
+                    if ($penyeliaCount === 0) {
+                        return 'Belum ada Penyelia untuk RPH ini. Tambahkan Penyelia terlebih dahulu.';
                     }
                     return null;
                 })
@@ -82,8 +136,49 @@ class RphResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name')->searchable(),
-                //
+                Tables\Columns\TextColumn::make('name')
+                    ->label('Nama RPH')
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('alamat')
+                    ->label('Alamat')
+                    ->searchable()
+                    ->limit(50), // Limit text length for better display
+                Tables\Columns\TextColumn::make('phone')
+                    ->label('Telepon')
+                    ->searchable(),
+                Tables\Columns\BadgeColumn::make('status_sertifikasi')
+                    ->label('Status Sertifikasi')
+                    ->colors([
+                        'success' => 'sudah',
+                        'warning' => 'belum',
+                    ])
+                    ->formatStateUsing(fn(string $state): string => ucfirst($state)),
+                Tables\Columns\TextColumn::make('penyelia.name')
+                    ->label('Penyelia')
+                    ->default('Belum ditentukan')
+                    ->searchable(),
+                // OLD CODE - IconColumn doesn't have formatStateUsing method
+                // Tables\Columns\IconColumn::make('file_sertifikasi')
+                //     ->label('File Sertifikat')
+                //     ->boolean()
+                //     ->trueIcon('heroicon-o-document-check')
+                //     ->falseIcon('heroicon-o-document-minus')
+                //     ->formatStateUsing(fn ($state): bool => !empty($state)),
+                // NEW CODE - Use TextColumn with icon display instead
+                Tables\Columns\TextColumn::make('file_sertifikasi')
+                    ->label('File Sertifikat')
+                    ->formatStateUsing(fn($state): string => !empty($state) ? 'Ada' : 'Tidak ada')
+                    ->badge()
+                    ->color(fn($state): string => !empty($state) ? 'success' : 'danger'),
+                Tables\Columns\TextColumn::make('created_at')
+                    ->label('Dibuat')
+                    ->dateTime('d/m/Y H:i')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                // OLD CODE - only showing name
+                // Tables\Columns\TextColumn::make('name')->searchable(),
+                // //
             ])
             ->filters([
                 //

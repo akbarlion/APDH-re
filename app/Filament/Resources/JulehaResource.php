@@ -11,6 +11,7 @@ use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -86,7 +87,9 @@ class JulehaResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->emptyStateHeading('No Juleha Found')
+            ->emptyStateDescription('Once you add a juleha, it will appear here.');
     }
 
     public static function getRelations(): array
@@ -124,7 +127,7 @@ class JulehaResource extends Resource
         }
 
         if (request()->routeIs('filament.admin.resources.julehas.edit')) {
-            return parent::getEloquentQuery(); // or your safe fallback
+            return parent::getEloquentQuery();
         }
 
         return Juleha::with('user')->whereHas('rphs', function ($query) use ($user) {

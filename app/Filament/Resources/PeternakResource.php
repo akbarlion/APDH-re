@@ -81,7 +81,9 @@ class PeternakResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->emptyStateHeading('No Peternak Found')
+            ->emptyStateDescription('Once you add a Peternak, it will appear here.');
     }
 
     public static function getRelations(): array
