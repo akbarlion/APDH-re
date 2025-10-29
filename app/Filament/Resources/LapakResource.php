@@ -20,7 +20,6 @@ class LapakResource extends Resource
     protected static null|string $model = User::class;
     protected static null|string $navigationLabel = 'Lapak';
     protected static null|string $breadcrumb = 'Lapak';
-
     protected static null|string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     public static function form(Form $form): Form
@@ -62,13 +61,35 @@ class LapakResource extends Resource
         ]);
     }
 
+    // public static function table(Table $table): Table
+    // {
+    //     return $table
+    //         ->columns([
+    //             Tables\Columns\TextColumn::make(name: 'no_lapak')->searchable(),
+    //             Tables\Columns\TextColumn::make('pasar.name')->numeric()->sortable(),
+    //             Tables\Columns\TextColumn::make('phone')->searchable(),
+    //         ])
+    //         ->filters([
+    //             //
+    //         ])
+    //         ->actions([
+    //             Tables\Actions\EditAction::make(),
+    //         ])
+    //         ->bulkActions([
+    //             Tables\Actions\BulkActionGroup::make([
+    //                 Tables\Actions\DeleteBulkAction::make(),
+    //             ]),
+    //         ])
+    //         ->emptyStateHeading('No Lapak Found')
+    //         ->emptyStateDescription('Once you add a Lapak, it will appear here.');
+    // }
     public static function table(Table $table): Table
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('no_lapak')->searchable(),
-                Tables\Columns\TextColumn::make('pasar.name')->numeric()->sortable(),
-                Tables\Columns\TextColumn::make('telp')->searchable(),
+                Tables\Columns\TextColumn::make('name')->searchable()->label('Nama Lapak'),
+                Tables\Columns\TextColumn::make('email')->searchable(),
+                Tables\Columns\TextColumn::make('phone')->searchable()->label('No Telp'),
             ])
             ->filters([
                 //
@@ -84,6 +105,7 @@ class LapakResource extends Resource
             ->emptyStateHeading('No Lapak Found')
             ->emptyStateDescription('Once you add a Lapak, it will appear here.');
     }
+
 
     public static function getRelations(): array
     {
@@ -119,6 +141,6 @@ class LapakResource extends Resource
             return parent::getEloquentQuery();
         }
 
-        return Lapak::query();
+        return User::where('role', 'lapak');
     }
 }

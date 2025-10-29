@@ -1,0 +1,56 @@
+/* Fix untuk masalah layout sidebar dan main content */
+
+/* Pastikan body dan html full height */
+html, body {
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* Fix container utama Filament */
+.fi-layout {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Fix sidebar height */
+.fi-sidebar {
+    height: 100vh;
+    overflow-y: auto;
+}
+
+/* Fix main content area */
+.fi-main {
+    height: 100vh;
+    overflow-y: auto;
+    flex: 1;
+}
+
+/* Fix header agar tidak floating */
+.fi-header {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    background: white;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+/* Fix content wrapper */
+.fi-main-content {
+    height: calc(100vh - 4rem);
+    overflow-y: auto;
+    padding-bottom: 2rem;
+}
+
+/* Fix untuk mobile responsive */
+@media (max-width: 768px) {
+    .fi-sidebar {
+        height: auto;
+        max-height: 100vh;
+    }
+    
+    .fi-main {
+        height: auto;
+        min-height: 100vh;
+    }
+}
