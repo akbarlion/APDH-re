@@ -35,7 +35,7 @@ class TransaksiResource extends Resource
         $rphId = Filament::auth()
             ->user()
             ->profile
-            ?->rph_id;
+                ?->rph_id;
         $lapak = Lapak::with('user')->get();
         return $form->schema([
             Forms\Components\Hidden::make('rph_id')->default($rphId),
@@ -101,7 +101,9 @@ class TransaksiResource extends Resource
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ])
-            ->defaultSort('id', 'desc');
+            ->defaultSort('id', 'desc')
+            ->emptyStateHeading('No Transaksi Found')
+            ->emptyStateDescription('Once you add a Transaksi, it will appear here.');
     }
 
     public static function getRelations(): array

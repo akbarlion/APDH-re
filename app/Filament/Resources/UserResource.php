@@ -35,7 +35,13 @@ class UserResource extends Resource
     protected static null|string $model = User::class;
 
     protected static null|string $navigationIcon = 'heroicon-o-users';
+
     protected static null|int $navigationSort = 2;
+
+    protected static null|string $navigationLabel = 'User';
+    protected static ?string $pluralModelLabel = 'User';
+
+
 
     private static function rph_selector($columns)
     {

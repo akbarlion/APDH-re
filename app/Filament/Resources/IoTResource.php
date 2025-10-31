@@ -23,6 +23,8 @@ class IoTResource extends Resource
     // Navigation label
     protected static null|string $navigationLabel = 'IoT';
     protected static null|string $breadcrumb = 'IoT';
+    protected static ?string $pluralModelLabel = 'IoT';
+
 
     public static function form(Form $form): Form
     {
